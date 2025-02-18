@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <main>
     <section>
-      <div className="w-full h-[700px] bg-right bg-contain bg-no-repeat bg-[url(https://png.pngtree.com/png-vector/20240314/ourmid/pngtree-cherry-blossom-tree-branch-with-blooming-flowers-png-image_11958836.png)]">
+      <div className="w-full h-[700px] border bg-right bg-contain bg-no-repeat bg-[url(https://png.pngtree.com/png-vector/20240314/ourmid/pngtree-cherry-blossom-tree-branch-with-blooming-flowers-png-image_11958836.png)]">
       
       <Box/>
       </div>
