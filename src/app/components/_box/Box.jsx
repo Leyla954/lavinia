@@ -34,8 +34,8 @@ const Box = () => {
             </div>
             <div className='text-center mt-3'>
               <p className='text-gray-700 font-semibold text-sm'>{item.title}</p>
-              <p className='text-green-600 font-semibold text-lg'>{item.price} AZN</p>
-              <button className='mt-2 bg-blue-500 text-white text-sm py-2 px-4 rounded-lg hover:bg-blue-600 transition w-full'>
+              <p className='text-purple-600 font-semibold text-lg'>{item.price} AZN</p>
+              <button className='mt-2 bg-green-600 text-white text-m py-2 px-4 rounded-lg hover:bg-green-500 transition w-full'>
                 <Link href={`/pages/${item.id}`}>Detail</Link>
               </button>
             </div>
@@ -46,7 +46,7 @@ const Box = () => {
       {visibleCount < data?.length && (
         <button
           onClick={() => setVisibleCount(visibleCount + 4)}
-          className='mt-4 bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition'
+          className='mt-4 bg-gray-800 text-white text-lg px-7 py-3 rounded-lg hover:bg-gray-900 transition'
         >
           More Products
         </button>
