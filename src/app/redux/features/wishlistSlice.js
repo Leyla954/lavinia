@@ -1,24 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-const initialState = {
-  wishlist: [],
-};
+import { createSlice } from "@reduxjs/toolkit";
 
 const wishlistSlice = createSlice({
-  name: 'wishlist',
-  initialState,
+  name: "wishlist",
+  initialState: [],
   reducers: {
     addToWishlist: (state, action) => {
-      const exists = state.wishlist.find((item) => item.id === action.payload.id);
-      if (!exists) {
-        state.wishlist.push(action.payload);
-        alert("Mehsul secilmislere elave olundu!");
-      } else {
-        alert("Mehsul artiq secilmislere elave olunub!");
-      }
+      state.push(action.payload);
     },
-  },
+    removeFromWishlist: (state, action) => {
+      return state.filter(item => item.id !== action.payload);
+    }
+  }
 });
 
-export const { addToWishlist } = wishlistSlice.actions;
+export const { addToWishlist, removeFromWishlist } = wishlistSlice.actions;
 export default wishlistSlice.reducer;

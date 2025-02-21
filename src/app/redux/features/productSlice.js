@@ -1,37 +1,35 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-export const fetchProduct = createAsyncThunk(
-  "product/fetchProduct",
-  async () => {
-    const response = await axios.get(
-      `https://67acb9903f5a4e1477dba29c.mockapi.io/dress`
-    );
-    return response.data;
+export const fetchProduct = createAsyncThunk('product/fetchProduct', async () => {
+  const response = await fetch('https://fakestoreapi.com/products');
+  if (!response.ok) {
+    throw new Error('Failed to fetch products');
   }
-);
+  return await response.json();
+});
 
-const productReducer = createSlice({
-  name: "product",
+const productSlice = createSlice({
+  name: 'product',
   initialState: {
-    data: null,
-    status: "idle",
+    data: [],
+    status: 'idle',
     error: null,
   },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchProduct.pending, (state) => {
-        state.status = "loading";
+        state.status = 'loading';
       })
       .addCase(fetchProduct.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.status = 'succeeded';
         state.data = action.payload;
       })
       .addCase(fetchProduct.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export default productReducer.reducer;
+export default productSlice.reducer;
