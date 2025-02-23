@@ -4,6 +4,7 @@ import Header from "./components/_header/Header";
 import Footer from "./components/_footer/Footer";
 import Loading from "./loading";
 import { Providers } from "./redux/provider";
+import Notification from "./components/_notification/Notification";
 
 export default function ClientLayout({ children }) {
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,7 @@ export default function ClientLayout({ children }) {
       <Header />
       <Providers>
         <div className="flex-1 flex flex-col">
+        <Notification />
           <main className="flex-1">{children}</main>
         </div>
       </Providers>

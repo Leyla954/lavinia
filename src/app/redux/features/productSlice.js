@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchProduct = createAsyncThunk('product/fetchProduct', async () => {
-  const response = await fetch('https://fakestoreapi.com/products');
+  const response = await fetch('https://67acb9903f5a4e1477dba29c.mockapi.io/dress');
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
