@@ -18,8 +18,8 @@ const Header = () => {
             <li><Link href="/pages/menu/men">Men</Link></li>
             <li><Link href="/pages/menu/kids">Kids</Link></li>
             <li><Link href="/pages/menu/desing">Desing</Link></li>
-            <li><Link href="/pages/wishlist"><HeartOutlined className='text-red-500 text-lg hover:scale-110 transition-transform' /> <sub>0</sub></Link></li>
-            <li><Link href="/pages/addtocard"><ShoppingOutlined className='text-blue-500 text-lg hover:scale-110 transition-transform' /> <sub>0</sub></Link></li>
+            <li><Link href="/pages/icons/wishlist"><HeartOutlined className='text-red-500 text-lg hover:scale-110 transition-transform' /> <sub>0</sub></Link></li>
+            <li><Link href="/pages/icons/addCart"><ShoppingOutlined className='text-blue-500 text-lg hover:scale-110 transition-transform' /> <sub>0</sub></Link></li>
             <li><Link href="/pages/log-in/login">Login</Link></li>
             <li><Link href="/pages/log-in/signup">Sign up</Link></li>
           </ul>

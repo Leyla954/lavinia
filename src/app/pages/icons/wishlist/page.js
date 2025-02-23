@@ -1,25 +1,12 @@
-import Box from '@/app/components/_box/Box'
-import React from 'react'
+import Box from "@/app/components/_box/Box";
 
-const page = () => {
-
-  const Wishlist = () => {
-    const [wishlist, setWishlist] = useState([]);
-  
-    useEffect(() => {
-      const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-      setWishlist(storedWishlist);
-    }, []);
-  
-    const removeFromWishlist = (id) => {
-      const updatedWishlist = wishlist.filter((item) => item.id !== id);
-      setWishlist(updatedWishlist);
-      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-    };
-
+const Wishlist = () => {
   return (
-   <Box/>
-  )
-}}
+    <div>
+      <h2 className="text-center text-2xl font-bold my-4">Seçilmiş Məhsullar</h2>
+      <Box wishlistPage={true} />
+    </div>
+  );
+};
 
-export default page
+export default Wishlist;
