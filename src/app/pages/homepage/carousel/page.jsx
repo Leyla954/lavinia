@@ -1,42 +1,80 @@
-import React from 'react'
-import { useRouter } from 'next/navigation';
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+'use client';
+import React, { useState } from 'react';
+import { Modal, Button } from 'antd';
 
-const Carousel = () => {
+const Page = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImages, setCurrentImages] = useState([]);
 
-  const router = useRouter();
+  // Modal açılma funksiyası
+  const showModal = (images) => {
+    setCurrentImages(images);
+    setIsModalOpen(true); // Modal açılır
+  };
 
-  const images = [
-    { src: "https://img.freepik.com/psd-premium/modelo-de-banner-de-moda-de-tendencia-psd-premium_641545-41.jpg?w=1380", link: "/pages/menu/women" },
-    { src: "https://img.freepik.com/vetores-premium/modelo-de-banner-de-moda-masculina-psd-com-cor-premium_758367-28.jpg?w=740", link: "/pages/menu/men" },
-    { src: "https://i.pinimg.com/736x/58/ff/54/58ff5415588a7729cdcc9ffe67e827d4.jpg", link: "/pages/menu/kids" },
+  // Modal bağlanma funksiyası
+  const closeModal = () => {
+    setIsModalOpen(false); // Modal bağlanır
+    setCurrentImages([]); // Şəkilləri sıfırlayır
+  };
+
+  // Kateqoriyaları filtr etmək
+  const categories = [
+    { id: 1, images: ['https://via.placeholder.com/500', 'https://via.placeholder.com/600'], category: 'Dress' },
+    { id: 2, images: ['https://via.placeholder.com/700', 'https://via.placeholder.com/800'], category: 'Pants' },
+    { id: 3, images: ['https://via.placeholder.com/900', 'https://via.placeholder.com/1000'], category: 'Skirt' },
+    { id: 4, images: ['https://via.placeholder.com/1100', 'https://via.placeholder.com/1200'], category: 'Bodysuit' }
   ];
 
+  // Kateqoriya adının olub-olmamasını yoxlayırıq
+  const filteredCategories = categories.filter(category => 
+    category.category && ['dress', 'pants', 'skirt', 'bodysuit'].includes(category.category.toLowerCase())
+  );
 
   return (
-    <section>
-        <div className="w-full max-w-5xl mt-10">
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              spaceBetween={10}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 3000 }}
-              className="rounded-2xl shadow-lg">
-              {images.map((item, index) => (
-                <SwiperSlide key={index}>
-                  <img src={item.src}alt={`Fashion ${index + 1}`} className="w-full h-[600px] object-cover rounded-2xl cursor-pointer" onClick={() => router.push(item.link)}/>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+    <div className="container mx-auto p-6">
+      {/* Kateqoriyaların siyahısı */}
+      <div className="grid grid-cols-3 gap-6">
+        {filteredCategories.map((category) => (
+          <div key={category.id} className="text-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+            <h2 className="text-xl">{category.category}</h2>
+            <img
+              src={category.images[0]} // İlk şəkli göstəririk
+              alt={category.category}
+              className="w-32 h-32 object-cover rounded-lg cursor-pointer"
+              onClick={() => showModal(category.images)} // Modalı açırıq
+            />
           </div>
-    </section>
-  )
-}
+        ))}
+      </div>
 
-export default Carousel
+      {/* Modal */}
+      <Modal
+        open={isModalOpen} // `open` istifadə olunur
+        onCancel={closeModal}
+        footer={null}
+        width={800}
+        className="relative"
+      >
+        <Button
+          onClick={closeModal}
+          className="absolute top-0 right-0 p-2 text-xl"
+        >
+          X
+        </Button>
+        <div className="space-x-4">
+          {currentImages.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`image-${index}`}
+              className="w-80 h-auto rounded-lg shadow-lg"
+            />
+          ))}
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+export default Page;

@@ -78,21 +78,21 @@ const DetailPage = () => {
   };
 
   return (
-    <div className="h-[500px] flex items-center justify-center bg-[url(https://t4.ftcdn.net/jpg/11/04/71/65/360_F_1104716585_VJK8pWVuFAyi6BHgZektW1EyR5ktyYrD.jpg)] bg-cover bg-top pt-10">
+    <div className="h-auto md:h-[500px] flex items-center justify-center bg-cover bg-top pt-10 px-4 sm:px-8" style={{ backgroundImage: 'url(https://t4.ftcdn.net/jpg/11/04/71/65/360_F_1104716585_VJK8pWVuFAyi6BHgZektW1EyR5ktyYrD.jpg)' }}>
       
       {alertMessage && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-5 right-5 z-50 w-full max-w-[300px] md:max-w-[250px]">
           <Alert 
             message={alertMessage} 
             type={alertType} 
             showIcon 
             className="shadow-lg rounded-lg text-sm"
             style={{ 
-              width: 250, 
+              width: '100%', 
               padding: '10px 15px', 
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', // Mavi-ağ gradient fon
-              color: '#004080', // Daha yumşaq mavi ton
+              background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', 
+              color: '#004080', 
               border: '1px solid #b3d9ff',
               boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)'
             }}
@@ -100,9 +100,9 @@ const DetailPage = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-lg rounded-lg w-full max-w-2xl flex flex-col md:flex-row p-6 gap-6">
+      <div className="bg-white shadow-lg rounded-lg w-full max-w-3xl flex flex-col md:flex-row p-6 gap-6">
         <div className="md:w-1/2 flex justify-center">
-          <img src={product?.image} alt={product?.title} className="w-full max-w-xs object-contain" />
+          <img src={product?.image} alt={product?.title} className="w-full max-w-[300px] sm:max-w-[400px] object-contain transition-all" />
         </div>
 
         <div className="md:w-1/2 flex flex-col justify-center">

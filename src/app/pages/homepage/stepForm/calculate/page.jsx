@@ -23,7 +23,7 @@ const Calculate = ({ waistSize, lengthSize, selectedImage, onClose }) => {
       </button>
       <h2 className="text-2xl font-bold text-gray-800 border-b pb-2 text-center">Result</h2>
       <p className="text-lg text-gray-700 mt-3 text-center">In our expert opinion, we recommend:</p>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {[{ label: "Waist Radius", value: `${radius} cm` },
           { label: "Fabric Length", value: `${fabricLength} cm` },
           { label: "Fabric Width", value: fabricWidth }
@@ -35,7 +35,7 @@ const Calculate = ({ waistSize, lengthSize, selectedImage, onClose }) => {
         ))}
       </div>
       {selectedImage && resultImages[selectedImage] && (
-        <img src={resultImages[selectedImage]} alt="Result" className="w-full mt-4" />
+        <img src={resultImages[selectedImage]} alt="Result" className="w-full mt-4 rounded-md object-contain" />
       )}
     </div>
   );

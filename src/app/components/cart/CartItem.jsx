@@ -11,7 +11,7 @@ const CartItem = ({ item }) => {
   const isInWishlist = wishlist.some((w) => w.id === item.id);
 
   return (
-    <div className="relative bg-white shadow-md rounded-lg p-6 flex items-center gap-6 w-[400px]">
+    <div className="relative bg-white shadow-md rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6 w-full sm:w-[400px] md:w-[500px]">
       <div className="absolute top-2 right-2 flex gap-3">
         <span onClick={() => dispatch(toggleWishlist(item))} className="cursor-pointer text-xl">
           {isInWishlist ? (
@@ -22,7 +22,7 @@ const CartItem = ({ item }) => {
         </span>
         <CloseOutlined onClick={() => dispatch(removeFromCart(item))} className="text-gray-500 text-lg cursor-pointer hover:text-red-500 transition" />
       </div>
-      <img src={item.image} alt={item.title} className="w-[140px] h-[140px] object-contain rounded-lg" />
+      <img src={item.image} alt={item.title} className="w-[140px] h-[140px] object-contain rounded-lg sm:mr-6 mb-4 sm:mb-0" />
       <div className='flex flex-col flex-grow'>
         <p className="text-gray-700 font-semibold text-base">{item.title}</p>
         <p className="text-blue-600 font-medium text-sm">{item.category}</p>

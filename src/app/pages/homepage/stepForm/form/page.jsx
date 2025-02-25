@@ -56,7 +56,7 @@ const StepForm = ({ onClose }) => {
 
   const handleImageSelect = (stepId, imageSrc) => {
     setSelectedImages((prev) => ({ ...prev, [stepId]: imageSrc }));
-    
+
     if (stepId === 1) {
       setStep2Images(imageSrc.includes("2.png")
         ? [
@@ -73,38 +73,37 @@ const StepForm = ({ onClose }) => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-7 shadow-2xl rounded-lg flex flex-col gap-6 bg-transparent relative z-10">
-      
+    <div className="w-full max-w-3xl mx-auto p-6 sm:p-7 shadow-2xl rounded-lg flex flex-col gap-6 bg-transparent relative z-10">
       {/* Close Button */}
       <button className="absolute top-3 right-3 text-gray-600 hover:text-gray-900" onClick={onClose}>
         <CloseOutlined style={{ fontSize: "20px" }} />
       </button>
       <h2 className="text-2xl font-bold text-center">Step Form</h2>
       {steps.map(({ id, label, image, content, extraImages, extraSelects }) => (
-        <div key={id} className="flex items-center p-6 rounded-lg shadow-md bg-transparent">
-          <img src={image} alt={`Step ${id}`} className="w-16 h-auto mr-4" />
+        <div key={id} className="flex flex-col sm:flex-row items-center p-6 rounded-lg shadow-md bg-transparent">
+          <img src={image} alt={`Step ${id}`} className="w-16 h-auto sm:mr-4 mb-4 sm:mb-0" />
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">{label}</h2>
             <p className="text-lg text-gray-700 mt-3">{content}</p>
             {extraImages && (
-              <div className="flex gap-4 mt-3">
+              <div className="flex gap-4 mt-3 flex-wrap justify-center sm:justify-start">
                 {extraImages.map((imgSrc, index) => (
                   <img
                     key={index}
                     src={imgSrc}
                     alt={`Extra ${index}`}
-                    className={`w-32 h-auto border border-gray-300 rounded-md cursor-pointer ${selectedImages[id] === imgSrc ? 'bg-[rgb(249,238,226)] border-2 border-orange-400' : 'bg-white'}`}
+                    className={`w-24 sm:w-32 h-auto border border-gray-300 rounded-md cursor-pointer ${selectedImages[id] === imgSrc ? 'bg-[rgb(249,238,226)] border-2 border-orange-400' : 'bg-white'}`}
                     onClick={() => handleImageSelect(id, imgSrc)}
                   />
                 ))}
               </div>
             )}
             {extraSelects && (
-              <div className="mt-4 flex gap-4">
+              <div className="mt-4 flex flex-wrap gap-4 justify-center sm:justify-start">
                 {[{ label: "Waist", value: waistSize, setValue: setWaistSize, min: 40 },
                   { label: "Length", value: lengthSize, setValue: setLengthSize, min: 0 }
                 ].map(({ label, value, setValue, min }) => (
-                  <div key={label} className="relative w-24">
+                  <div key={label} className="relative w-24 sm:w-28">
                     <input type="number" value={value} onChange={(e) => setValue(Math.max(min, Number(e.target.value)))} className="w-full h-10 border border-gray-300 rounded-md text-center appearance-none" />
                   </div>
                 ))}
@@ -114,7 +113,7 @@ const StepForm = ({ onClose }) => {
         </div>
       ))}
       <div className="flex justify-center mt-6">
-        <button onClick={() => setShowCalculate(true)} className="w-60 h-16 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-500 transition">
+        <button onClick={() => setShowCalculate(true)} className="w-48 sm:w-60 h-14 sm:h-16 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-500 transition">
           Calculate
         </button>
       </div>

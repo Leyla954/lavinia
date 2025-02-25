@@ -11,14 +11,14 @@ const Notification = () => {
   if (!alertMessage) return null;
 
   return (
-    <div className="fixed top-5 right-5 z-50">
+    <div className="fixed top-5 right-5 z-50 w-full max-w-[300px] sm:max-w-[400px] md:max-w-[450px] px-4">
       <Alert
         message={alertMessage}
         type={alertType}
         showIcon
         className="shadow-lg rounded-lg text-sm"
         style={{
-          width: 250,
+          width: '100%',
           padding: '10px 15px',
           borderRadius: '8px',
           background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', // Mavi-ağ gradient fon
@@ -30,7 +30,7 @@ const Notification = () => {
       {/* 3 saniye sonra bildirim kapanır */}
       <button
         onClick={() => dispatch(clearNotification())}
-        className="absolute top-2 right-2 text-white bg-transparent border-none cursor-pointer"
+        className="absolute top-2 right-2 text-white bg-transparent border-none cursor-pointer text-xl"
       >
         X
       </button>
