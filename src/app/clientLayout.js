@@ -23,14 +23,14 @@ export default function ClientLayout({ children }) {
 
   return (
     <>
+     <Providers>
       <Header />
-      <Providers>
-        <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col">
         <Notification />
-          <main className="flex-1">{children}</main>
-        </div>
-      </Providers>
+        <main className="flex-1">{children}</main>
+      </div>
       <Footer />
+    </Providers>
     </>
   );
 }

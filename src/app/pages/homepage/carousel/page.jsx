@@ -1,80 +1,52 @@
-'use client';
-import React, { useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Carousel } from 'antd';
+import Link from 'next/link';
 
-const Page = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentImages, setCurrentImages] = useState([]);
+const categories = [
+  { src: 'https://img.freepik.com/premium-photo/elegant-woman-orange-gown-with-ruffles-flowing-fabric_1346134-5800.jpg?w=1800', label: 'For women', link: '/pages/menu/women', textColor: 'text-white' },
+  { src: 'https://nicolebaas.com/wp-content/uploads/2018/03/Kit-and-Ace-boston-mens-activewear-editorial-photographer-1003.jpg', label: 'For men', link: '/pages/menu/men', textColor: 'text-white' },
+  { src: 'https://images.squarespace-cdn.com/content/v1/5bf07da11aef1de706d5b257/79484c84-ba4f-4e15-bba9-61648f2994ac/All-Saints-Childrens-Fashion-Photographer-Simon-Songhurst-Kids-Fashion-Photography-03.jpg', label: 'For kids', link: '/pages/menu/kids', textColor: 'text-white' },
+  { src: 'https://cdn.shopify.com/s/files/1/0355/1805/files/kids-editorial-3.jpg?v=1592943001', label: 'For women', link: '/pages/menu/women', textColor: 'text-white' },
+  { src: 'https://candicelamarandphotography.com/wp-content/uploads/sites/5014/2014/03/family-7053-1.jpg', label: 'For men', link: '/pages/menu/men', textColor: 'text-white' },
+  { src: 'https://juniorstyle.net/wp/wp-content/uploads/2018/04/ed-colour-condition/editorial_cindy_james_colour_condition_manuela_kids_design-featured-image-1-570x380.jpg', label: 'For kids', link: '/pages/menu/kids', textColor: 'text-white' },
+  { src: 'https://img.freepik.com/premium-photo/elegant-woman-coral-pink-flowing-dress_1346134-6113.jpg', label: 'For women', link: '/pages/menu/women', textColor: 'text-white' },
+  { src: 'https://isabelscharenberg.com/sites/default/files/styles/gallery_full/public/2019-05/Andreas_Ortner_Elle_Men_Fashion_Editorial_03.jpg?itok=YWH73emu', label: 'For men', link: '/pages/menu/men', textColor: 'text-white' },
+  { src: 'https://highendbeautyretouching.com/blog/images/gallery/news_preview2_90.jpg', label: 'For kids', link: '/pages/menu/kids', textColor: 'text-white' },
 
-  // Modal açılma funksiyası
-  const showModal = (images) => {
-    setCurrentImages(images);
-    setIsModalOpen(true); // Modal açılır
-  };
+];
 
-  // Modal bağlanma funksiyası
-  const closeModal = () => {
-    setIsModalOpen(false); // Modal bağlanır
-    setCurrentImages([]); // Şəkilləri sıfırlayır
-  };
-
-  // Kateqoriyaları filtr etmək
-  const categories = [
-    { id: 1, images: ['https://via.placeholder.com/500', 'https://via.placeholder.com/600'], category: 'Dress' },
-    { id: 2, images: ['https://via.placeholder.com/700', 'https://via.placeholder.com/800'], category: 'Pants' },
-    { id: 3, images: ['https://via.placeholder.com/900', 'https://via.placeholder.com/1000'], category: 'Skirt' },
-    { id: 4, images: ['https://via.placeholder.com/1100', 'https://via.placeholder.com/1200'], category: 'Bodysuit' }
-  ];
-
-  // Kateqoriya adının olub-olmamasını yoxlayırıq
-  const filteredCategories = categories.filter(category => 
-    category.category && ['dress', 'pants', 'skirt', 'bodysuit'].includes(category.category.toLowerCase())
-  );
-
+const FashionCarousel = () => {
   return (
-    <div className="container mx-auto p-6">
-      {/* Kateqoriyaların siyahısı */}
-      <div className="grid grid-cols-3 gap-6">
-        {filteredCategories.map((category) => (
-          <div key={category.id} className="text-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-            <h2 className="text-xl">{category.category}</h2>
-            <img
-              src={category.images[0]} // İlk şəkli göstəririk
-              alt={category.category}
-              className="w-32 h-32 object-cover rounded-lg cursor-pointer"
-              onClick={() => showModal(category.images)} // Modalı açırıq
-            />
+    <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-7">
+      <Carousel autoplay dots={false} arrows>
+        {categories.map(({ src, label, link, textColor }, index) => (
+          <div key={index} className="relative h-[600px] sm:h-[700px] flex items-center justify-center overflow-hidden">
+            <Link href={link} className="block w-full h-full relative">
+              <img
+                src={src}
+                alt={label}
+                className="w-full h-full object-cover rounded-2xl shadow-lg cursor-pointer"
+              />
+              <span className={`absolute top-1/2 right-10 transform -translate-y-1/2 ${textColor} text-6xl sm:text-8xl font-extrabold tracking-wider drop-shadow-2xl`} style={{ fontFamily: 'Chalkduster, Brush Script MT, cursive' }}>
+                {label}
+              </span>
+            </Link>
           </div>
         ))}
-      </div>
-
-      {/* Modal */}
-      <Modal
-        open={isModalOpen} // `open` istifadə olunur
-        onCancel={closeModal}
-        footer={null}
-        width={800}
-        className="relative"
-      >
-        <Button
-          onClick={closeModal}
-          className="absolute top-0 right-0 p-2 text-xl"
-        >
-          X
-        </Button>
-        <div className="space-x-4">
-          {currentImages.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`image-${index}`}
-              className="w-80 h-auto rounded-lg shadow-lg"
-            />
-          ))}
-        </div>
-      </Modal>
+      </Carousel>
+      <style jsx>{`
+        :global(.ant-carousel .slick-prev, .ant-carousel .slick-next) {
+          width: 50px;
+          height: 50px;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 50%;
+          transition: background 0.3s;
+        }
+        :global(.ant-carousel .slick-prev:hover, .ant-carousel .slick-next:hover) {
+          background: rgba(255, 255, 255, 0.9);
+        }
+      `}</style>
     </div>
   );
 };
 
-export default Page;
+export default FashionCarousel;

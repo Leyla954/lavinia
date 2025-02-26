@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchDessing = createAsyncThunk('dessing/fetchDessing', async () => {
-  const response = await fetch('https://67acb9903f5a4e1477dba29c.mockapi.io/dessing');
+  const response = await fetch('https://67acb9903f5a4e1477dba29c.mockapi.io/yourstyle');
   if (!response.ok) {
     throw new Error('Failed to fetch dessing data');
   }

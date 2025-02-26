@@ -1,8 +1,11 @@
-'use client';
-import React, { useState } from 'react';
-import { DownOutlined, HeartOutlined, ShoppingOutlined, MenuOutlined } from '@ant-design/icons';
-import { Dropdown, Space } from 'antd';
-import Link from 'next/link';
+"use client";
+import React, { useState } from "react";
+import { DownOutlined, HeartOutlined, ShoppingOutlined, MenuOutlined } from "@ant-design/icons";
+import { Dropdown, Space } from "antd";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "@/app/redux/features/authSlice";
 
 const categories = [
   { label: "Women", key: "women", href: "/pages/menu/women" },
@@ -12,126 +15,104 @@ const categories = [
 
 const items = categories.map(category => ({
   key: category.key,
-  label: <div className='py-2 px-6 hover:text-green-600 bg-transparent transition duration-200 ease-in-out'>
-    <Link href={category.href} className="relative">{category.label}
-      <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:text-green-500 transition-all duration-800"></span>
+  label: (
+    <Link href={category.href} className="block px-4 py-2 transition-all duration-300 hover:text-green-500">
+      {category.label}
     </Link>
-  </div>
+  )
 }));
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
+  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/");
   };
 
   return (
-    <header className='bg-transparent'>
-      <div className="container m-auto font-serif font-bold flex justify-around  items-center px-2 py-5 shadow-lg shadow-green-500/80 ">
+    <header className="bg-white shadow-lg shadow-green-300/50 top-0 left-0 w-full z-50">
+      <div className="max-w-7xl mx-auto flex justify-between items-center py-6 px-6 md:px-12 lg:px-16">
         <div className="flex items-center gap-3 cursor-pointer">
-          <img src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png" alt="Logo" className="h-12" />
-          <h1 className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-800 group relative'>Lavinia</h1>
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png"
+            alt="Logo"
+            className="h-20 md:h-24"
+          />
+          <h1 className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</h1>
+          {user && <span className="text-lg font-medium text-green-600 ml-4">{user.name}</span>}
         </div>
-        <div className="lg:hidden flex items-center gap-4">
-          <MenuOutlined className="text-3xl text-gray-800 cursor-pointer hover:text-green-600 transition duration-200 ease-in-out" onClick={toggleMenu} />
-        </div>
-        <div className='hidden lg:flex items-center gap-7'>
-          <ul className='flex gap-7 font-bold'>
-            <li className='group relative p-3 rounded-2xl hover:text-green-600 transition duration-200 ease-in-out'>
-              <Link href="/" className="relative">Home
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+
+        <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+          <Link href="/" className="relative transition duration-300 hover:text-green-600 group">
+            Home
+            <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+          </Link>
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <span className="flex items-center gap-1 transition duration-300 hover:text-green-600 relative group cursor-pointer">
+              <Space>Shop <DownOutlined /></Space>
+              <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+            </span>
+          </Dropdown>
+          <Link href="/pages/menu/desing" className="relative transition duration-300 hover:text-green-600 group">
+            Design
+            <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+          </Link>
+          {user ? (
+            <button onClick={handleLogout} className="px-4 py-2 bg-red-500 hover:bg-red-400 rounded-md transition">
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link href="/pages/log-in/login" className="relative transition duration-300 hover:text-green-600 group">
+                Login
+                <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
               </Link>
-            </li>
-            <li className='group relative p-3 rounded-2xl hover:text-green-600 transition duration-200 ease-in-out'>
-              <Dropdown menu={{ items }} trigger={['hover']}>
-                <a onClick={(e) => e.preventDefault()} className="relative">
-                  <Space>Shop <DownOutlined />
-                    <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-                  </Space>
-                </a>
-              </Dropdown>
-            </li>
-            <li className='group relative p-3 rounded-2xl hover:text-green-600 transition duration-200 ease-in-out'>
-              <Link href="/pages/menu/desing" className="relative">Design
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+              <Link href="/pages/log-in/signup" className="relative transition duration-300 hover:text-green-600 group">
+                Sign up
+                <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
               </Link>
-            </li>
-            <li className='group relative py-3 rounded-2xl'>
-              <Link href="/pages/icons/wishlist" className="relative">
-                <HeartOutlined className='text-red-500 text-lg hover:scale-110 transition-transform' />
-                <sub>0</sub>
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:text-red-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative py-3 rounded-2xl'>
-              <Link href="/pages/icons/addCart" className="relative">
-                <ShoppingOutlined className='text-blue-500 text-lg hover:scale-110 transition-transform' />
-                <sub>0</sub>
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:text-blue-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative p-3 rounded-2xl hover:text-green-600 transition duration-200 ease-in-out'>
-              <Link href="/pages/log-in/login" className="relative">Login
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative p-3 rounded-2xl hover:text-green-600 transition duration-200 ease-in-out'>
-              <Link href="/pages/log-in/signup" className="relative">Sign up
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className={`lg:hidden fixed top-0 left-0 w-full h-full bg-white bg-opacity-90 z-20 transition-all ${isMenuOpen ? 'block' : 'hidden'}`}>
-          <div className="flex justify-end p-6">
-            <MenuOutlined className="text-3xl text-gray-800 cursor-pointer hover:text-green-600 transition duration-200 ease-in-out" onClick={toggleMenu} />
-          </div>
-          <ul className="flex flex-col items-center gap-6 py-10">
-            <li className='group relative p-3'>
-              <Link href="/" className="relative">Home
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative p-3'>
-              <Dropdown menu={{ items }} trigger={['hover']}>
-                <a onClick={(e) => e.preventDefault()} className="relative">
-                  <Space>Shop <DownOutlined />
-                    <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-                  </Space>
-                </a>
-              </Dropdown>
-            </li>
-            <li className='group relative p-3'>
-              <Link href="/pages/menu/desing" className="relative">Design
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative py-3'>
-              <Link href="/pages/icons/wishlist" className="relative">
-                <HeartOutlined className='text-red-500 text-lg' />
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:text-red-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative py-3'>
-              <Link href="/pages/icons/addCart" className="relative">
-                <ShoppingOutlined className='text-blue-500 text-lg' />
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:text-blue-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative p-3'>
-              <Link href="/pages/log-in/login" className="relative">Login
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-            <li className='group relative p-3'>
-              <Link href="/pages/log-in/signup" className="relative">Sign up
-                <span className="absolute top-6 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
-              </Link>
-            </li>
-          </ul>
+            </>
+          )}
+          <Link href="/pages/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform">
+            <HeartOutlined />
+          </Link>
+          <Link href="/pages/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform">
+            <ShoppingOutlined />
+          </Link>
+        </nav>
+
+        <div className="lg:hidden flex items-center">
+          <MenuOutlined className="text-3xl cursor-pointer" onClick={toggleMenu} />
         </div>
       </div>
+
+      {isMenuOpen && (
+        <div className="lg:hidden absolute top-16 left-0 w-full bg-white shadow-lg flex flex-col items-center py-5 gap-4 text-base md:text-lg font-serif italic">
+          <Link href="/" className="hover:text-green-600">Home</Link>
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <span className="hover:text-green-600 cursor-pointer">
+              <Space>Shop <DownOutlined /></Space>
+            </span>
+          </Dropdown>
+          <Link href="/pages/menu/desing" className="hover:text-green-600">Design</Link>
+          {user ? (
+            <button onClick={handleLogout} className="px-4 py-2 bg-red-500 hover:bg-red-400 rounded-md transition">
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link href="/pages/log-in/login" className="hover:text-green-600">Login</Link>
+              <Link href="/pages/log-in/signup" className="hover:text-green-600">Sign up</Link>
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 };
