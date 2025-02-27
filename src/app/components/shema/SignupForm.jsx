@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { login } from "@/app/redux/features/authSlice"; // Redux action import edilir
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +10,7 @@ import { validationSchema } from "./utils/validationSchema";
 
 const SignupForm = () => {
   const router = useRouter();
+  const dispatch = useDispatch(); // Redux dispatch
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -24,10 +27,16 @@ const SignupForm = () => {
       confirmPassword: "",
     },
     validationSchema: validationSchema.signup,
-    onSubmit: (values) => {
-      console.log("Signup Successful", values);
-      setTimeout(() => router.push("/log-in"), 1000);
-    },
+    
+
+      onSubmit: (values) => {
+        console.log("Signup Successful", values);
+        localStorage.setItem("registeredUser", JSON.stringify(values)); // Məlumatı saxla
+        setTimeout(() => router.push("/log-in/login"), 1000); // Login səhifəsinə yönləndir
+      },
+      
+
+      
   });
 
   return (

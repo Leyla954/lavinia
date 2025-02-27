@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
+import { login } from "@/app/redux/features/authSlice";
 import * as Yup from "yup";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: { email: "", password: "" },
@@ -17,9 +20,15 @@ const LoginForm = () => {
       password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
     }),
     onSubmit: (values) => {
-      console.log("Login Successful", values);
-      router.push("/");
-    },
+      const registeredUser = JSON.parse(localStorage.getItem("registeredUser"));
+      if (registeredUser && registeredUser.email === values.email && registeredUser.password === values.password) {
+        dispatch(login(registeredUser)); // Redux-a məlumatı göndər
+        localStorage.setItem("user", JSON.stringify(registeredUser)); // LocalStorage-də də saxla
+        router.push("/"); // Ana səhifəyə yönləndir
+      } else {
+        alert("Invalid credentials!");
+      }
+    }
   });
 
   return (

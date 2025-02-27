@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { DownOutlined, HeartOutlined, ShoppingOutlined, MenuOutlined } from "@ant-design/icons";
+import { DownOutlined, HeartOutlined, ShoppingOutlined, MenuOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Dropdown, Space } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,9 +8,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/app/redux/features/authSlice";
 
 const categories = [
-  { label: "Women", key: "women", href: "/pages/menu/women" },
-  { label: "Men", key: "men", href: "/pages/menu/men" },
-  { label: "Kids", key: "kids", href: "/pages/menu/kids" }
+  { label: "Women", key: "women", href: "/menu/women" },
+  { label: "Men", key: "men", href: "/menu/men" },
+  { label: "Kids", key: "kids", href: "/menu/kids" }
 ];
 
 const items = categories.map(category => ({
@@ -26,6 +26,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
 
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
@@ -33,6 +34,19 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout());
     router.push("/");
+  };
+
+  const userMenu = {
+    items: [
+      {
+        key: "logout",
+        label: (
+          <span onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+            <LogoutOutlined /> Logout
+          </span>
+        )
+      }
+    ]
   };
 
   return (
@@ -45,8 +59,9 @@ const Header = () => {
             className="h-20 md:h-24"
           />
           <h1 className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</h1>
-          {user && <span className="text-lg font-medium text-green-600 ml-4">{user.name}</span>}
-        </div>
+          
+          </div>
+         
 
         <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
           <Link href="/" className="relative transition duration-300 hover:text-green-600 group">
@@ -59,33 +74,41 @@ const Header = () => {
               <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
             </span>
           </Dropdown>
-          <Link href="/pages/menu/desing" className="relative transition duration-300 hover:text-green-600 group">
+          <Link href="/menu/desing" className="relative transition duration-300 hover:text-green-600 group">
             Design
             <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
           </Link>
-          {user ? (
-            <button onClick={handleLogout} className="px-4 py-2 bg-red-500 hover:bg-red-400 rounded-md transition">
-              Logout
-            </button>
+          {isAuthenticated ? (
+            <>
+            </>
           ) : (
             <>
-              <Link href="/pages/log-in/login" className="relative transition duration-300 hover:text-green-600 group">
+              <Link href="/log-in/login" className="relative transition duration-300 hover:text-green-600 group">
                 Login
                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
               </Link>
-              <Link href="/pages/log-in/signup" className="relative transition duration-300 hover:text-green-600 group">
+              <Link href="/log-in/signup" className="relative transition duration-300 hover:text-green-600 group">
                 Sign up
                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
               </Link>
             </>
           )}
-          <Link href="/pages/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform">
+          <Link href="/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform">
             <HeartOutlined />
           </Link>
-          <Link href="/pages/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform">
+          <Link href="/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform">
             <ShoppingOutlined />
           </Link>
+          <div className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+          <Dropdown menu={userMenu} trigger={["hover"]} placement="bottom">
+              <span className="relative transition duration-300 hover:text-green-600 group cursor-pointer">
+                {user?.name} {user?.surname}
+                <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+              </span>
+            </Dropdown>
+          </div>
         </nav>
+        
 
         <div className="lg:hidden flex items-center">
           <MenuOutlined className="text-3xl cursor-pointer" onClick={toggleMenu} />
@@ -100,15 +123,15 @@ const Header = () => {
               <Space>Shop <DownOutlined /></Space>
             </span>
           </Dropdown>
-          <Link href="/pages/menu/desing" className="hover:text-green-600">Design</Link>
-          {user ? (
-            <button onClick={handleLogout} className="px-4 py-2 bg-red-500 hover:bg-red-400 rounded-md transition">
-              Logout
-            </button>
+          <Link href="/menu/desing" className="hover:text-green-600">Design</Link>
+          {isAuthenticated ? (
+            <span onClick={handleLogout} className="flex justify-center items-center gap-2">
+            <LogoutOutlined /> Logout
+          </span>
           ) : (
             <>
-              <Link href="/pages/log-in/login" className="hover:text-green-600">Login</Link>
-              <Link href="/pages/log-in/signup" className="hover:text-green-600">Sign up</Link>
+              <Link href="/log-in/login" className="hover:text-green-600">Login</Link>
+              <Link href="/log-in/signup" className="hover:text-green-600">Sign up</Link>
             </>
           )}
         </div>
