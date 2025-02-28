@@ -1,0 +1,2279 @@
+// components/_box/Box
+// 'use client';
+// import React, { useEffect, useState } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchProduct } from '@/app/redux/features/productSlice';
+// import Loading from '@/app/loading';
+// import NotFound from '@/app/not-found';
+// import WishlistIcons from '@/app/components/_wishlist/WishlistIcons';
+// import ShopIcons from '@/app/components/shop/ShopIcons';
+// import Link from 'next/link';
+
+// const Box = ({ wishlistPage = false, shopPage = false, filteredData = [] }) => {
+//   const dispatch = useDispatch();
+//   const { data, status } = useSelector((state) => state.product);
+//   const wishlist = useSelector((state) => state.wishlist.items);
+//   const [visibleCount, setVisibleCount] = useState(4);
+
+//   useEffect(() => {
+//     if (status === 'idle') {
+//       dispatch(fetchProduct());
+//     }
+//   }, [dispatch, status]);
+
+//   if (status === 'loading') {
+//     return <div><Loading />Loading...</div>;
+//   }
+
+//   if (status === 'failed') {
+//     return <div><NotFound /></div>;
+//   }
+
+//   const displayedData = wishlistPage ? wishlist : (filteredData.length > 0 ? filteredData : data);
+
+//   return (
+//     <div className='flex flex-col items-center'>
+//       {displayedData.length === 0 ? (
+//         <NotFound />
+//       ) : (
+//         <>
+//           <div className={`m-auto grid gap-6 p-4 place-items-center ${displayedData.length === 1 ? 'grid-cols-1' 
+//             : displayedData.length === 2 ? 'grid-cols-2' 
+//             : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'} justify-center`}>
+//             {displayedData.slice(0, visibleCount).map((item) => (
+//               <div key={item.id} className='bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition duration-300 transform hover:scale-105 flex flex-col justify-between p-4 h-auto'>
+//                 <div className='relative group flex flex-col items-center'>
+//                   <img src={item.image} alt={item.title} className='w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] object-contain transition-all' />
+//                   <div className='absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
+//                     {wishlistPage ? (
+//                       <WishlistIcons item={item} />
+//                     ) : (
+//                       <ShopIcons item={item} />
+//                     )}
+//                   </div>
+//                 </div>
+//                 <div className='text-center mt-3'>
+//                   <p className='text-gray-700 font-semibold text-sm'>{item.title}</p>
+//                   <p className='text-purple-600 font-semibold text-lg'>{item.price} AZN</p>
+//                   <Link href={`/${item.id}`}>
+//                     <button className="mt-2 bg-green-600 text-white text-m py-2 px-4 rounded-lg hover:bg-green-500 transition w-full">
+//                       Detail
+//                     </button>
+//                   </Link>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+
+//           {!wishlistPage && visibleCount < displayedData.length && (
+//             <button 
+//               onClick={() => setVisibleCount(visibleCount + 4)} 
+//               className='mt-4 bg-gray-800 text-white text-lg px-7 py-3 rounded-lg hover:bg-gray-900 transition'>
+//               More products
+//             </button>
+//           )}
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Box;
+
+// components/_detail
+// import React, { useState, useEffect } from 'react';
+// import { HeartFilled, HeartOutlined, ShoppingOutlined } from '@ant-design/icons';
+// import { Alert } from 'antd'; 
+// import { useDispatch, useSelector } from 'react-redux';
+// import { useParams } from 'next/navigation';
+// import NotFound from '@/app/not-found';
+// import Loading from '@/app/loading';
+// import StarRating from '../_rating/starRating';
+// import { toggleWishlist } from '../../redux/features/wishlistSlice';
+// import { addToCart, removeFromCart } from '../../redux/features/cartSlice';
+
+// const DetailPage = () => {
+//   const { id } = useParams();
+//   const productId = decodeURIComponent(id);
+  
+//   const dispatch = useDispatch();
+//   const wishlist = useSelector((state) => state.wishlist.items);
+//   const cart = useSelector((state) => state.cart.items);
+  
+//   const [product, setProduct] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [userRating, setUserRating] = useState(0);
+//   const [alertMessage, setAlertMessage] = useState(null);
+//   const [alertType, setAlertType] = useState(null);
+
+//   useEffect(() => {
+//     if (!productId) {
+//       setError('Invalid product ID');
+//       setLoading(false);
+//       return;
+//     }
+
+//     const fetchProduct = async () => {
+//       try {
+//         const res = await fetch(`https://67acb9903f5a4e1477dba29c.mockapi.io/dress/${productId}`);
+//         if (!res.ok) throw new Error(`Failed to fetch product with ID: ${productId}`);
+        
+//         const data = await res.json();
+//         setProduct(data);
+//       } catch (error) {
+//         setError(error.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProduct();
+//   }, [productId]);
+
+//   if (loading) return <Loading />;
+//   if (error) return <NotFound />;
+
+//   const isInWishlist = wishlist.some((item) => item.id === product?.id);
+//   const isInCart = cart.some((item) => item.id === product?.id);
+
+//   const showAlert = (message, type) => {
+//     setAlertMessage(message);
+//     setAlertType(type);
+//     setTimeout(() => {
+//       setAlertMessage(null);
+//     }, 3000);
+//   };
+
+//   const handleWishlistClick = () => {
+//     dispatch(toggleWishlist(product));
+//     showAlert(isInWishlist ? 'Removed from wishlist' : 'Added to wishlist', isInWishlist ? 'warning' : 'success');
+//   };
+
+//   const handleCartClick = () => {
+//     if (isInCart) {
+//       dispatch(removeFromCart(product));
+//       showAlert('Removed from cart', 'warning');
+//     } else {
+//       dispatch(addToCart(product));
+//       showAlert('Added to cart', 'success');
+//     }
+//   };
+
+//   return (
+//     <div className="h-auto md:h-[500px] flex items-center justify-center bg-cover bg-top pt-10 px-4 sm:px-8" style={{ backgroundImage: 'url(https://t4.ftcdn.net/jpg/11/04/71/65/360_F_1104716585_VJK8pWVuFAyi6BHgZektW1EyR5ktyYrD.jpg)' }}>
+      
+//       {alertMessage && (
+//         <div className="fixed top-5 right-5 z-50 w-full max-w-[300px] md:max-w-[250px]">
+//           <Alert 
+//             message={alertMessage} 
+//             type={alertType} 
+//             showIcon 
+//             className="shadow-lg rounded-lg text-sm"
+//             style={{ 
+//               width: '100%', 
+//               padding: '10px 15px', 
+//               borderRadius: '8px',
+//               background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', 
+//               color: '#004080', 
+//               border: '1px solid #b3d9ff',
+//               boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)'
+//             }}
+//           />
+//         </div>
+//       )}
+
+//       <div className="bg-white shadow-lg rounded-lg w-full max-w-3xl flex flex-col md:flex-row p-6 gap-6">
+//         <div className="md:w-1/2 flex justify-center">
+//           <img src={product?.image} alt={product?.title} className="w-full max-w-[300px] sm:max-w-[400px] object-contain transition-all" />
+//         </div>
+
+//         <div className="md:w-1/2 flex flex-col justify-center">
+//           <h1 className="text-xl font-bold">{product?.title}</h1>
+//           <p className="text-lg text-gray-600 mt-2">{product?.price} AZN</p>
+//           <p className="text-sm text-gray-500 mt-2">{product?.description}</p>
+
+//           <div className="flex items-center mt-3">
+//             <StarRating rating={userRating} onRatingChange={setUserRating} />
+//             <span className="ml-2 text-gray-700">{product?.rating?.rate} / 5</span>
+//             <span className="ml-2 text-gray-500">({product?.rating?.count} reviews)</span>
+//           </div>
+
+//           <div className="flex gap-4 mt-4">
+//             {/* Wishlist Icon */}
+//             {isInWishlist ? (
+//               <HeartFilled 
+//                 onClick={handleWishlistClick}
+//                 className="text-red-500 text-2xl cursor-pointer hover:scale-110 transition-transform"
+//               />
+//             ) : (
+//               <HeartOutlined 
+//                 onClick={handleWishlistClick}
+//                 className="text-gray-500 text-2xl cursor-pointer hover:text-red-500 hover:scale-110 transition-transform"
+//               />
+//             )}
+
+//             {/* Cart Icon */}
+//             <ShoppingOutlined 
+//               onClick={handleCartClick}
+//               className={`text-2xl cursor-pointer hover:scale-110 transition-transform ${
+//                 isInCart ? 'text-blue-500' : 'text-gray-500 hover:text-blue-500'
+//               }`}
+//             />
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default DetailPage;
+
+// components/_header/Header.jsx
+// "use client";
+// import React, { useState } from "react";
+// import { DownOutlined, HeartOutlined, ShoppingOutlined, MenuOutlined, LogoutOutlined } from "@ant-design/icons";
+// import { Dropdown, Space } from "antd";
+// import Link from "next/link";
+// import { useRouter } from "next/navigation";
+// import { useSelector, useDispatch } from "react-redux";
+// import { logout } from "@/app/redux/features/authSlice";
+
+// const categories = [
+//   { label: "Women", key: "women", href: "/menu/women" },
+//   { label: "Men", key: "men", href: "/menu/men" },
+//   { label: "Kids", key: "kids", href: "/menu/kids" }
+// ];
+
+// const items = categories.map(category => ({
+//   key: category.key,
+//   label: (
+//     <Link href={category.href} className="block px-4 py-2 transition-all duration-300 hover:text-green-500">
+//       {category.label}
+//     </Link>
+//   )
+// }));
+
+// const Header = () => {
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const router = useRouter();
+//   const dispatch = useDispatch();
+//   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+//   const user = useSelector((state) => state.auth.user);
+
+//   const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  
+//   const handleLogout = () => {
+//     dispatch(logout());
+//     router.push("/");
+//   };
+
+//   const userMenu = {
+//     items: [
+//       {
+//         key: "logout",
+//         label: (
+//           <span onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+//             <LogoutOutlined /> Logout
+//           </span>
+//         )
+//       }
+//     ]
+//   };
+
+//   return (
+//     <header className="bg-white shadow-lg shadow-green-300/50 top-0 left-0 w-full z-50">
+//       <div className="max-w-7xl mx-auto flex justify-between items-center py-6 px-6 md:px-12 lg:px-16">
+//         <div className="flex items-center gap-3 cursor-pointer">
+//           <img
+//             src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png"
+//             alt="Logo"
+//             className="h-20 md:h-24"
+//           />
+//           <h1 className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</h1>
+          
+//           </div>
+         
+
+//         <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+//           <Link href="/" className="relative transition duration-300 hover:text-green-600 group">
+//             Home
+//             <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+//           </Link>
+//           <Dropdown menu={{ items }} trigger={["click"]}>
+//             <span className="flex items-center gap-1 transition duration-300 hover:text-green-600 relative group cursor-pointer">
+//               <Space>Shop <DownOutlined /></Space>
+//               <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+//             </span>
+//           </Dropdown>
+//           <Link href="/menu/desing" className="relative transition duration-300 hover:text-green-600 group">
+//             Design
+//             <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+//           </Link>
+//           {isAuthenticated ? (
+//             <>
+//             </>
+//           ) : (
+//             <>
+//               <Link href="/log-in/login" className="relative transition duration-300 hover:text-green-600 group">
+//                 Login
+//                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+//               </Link>
+//               <Link href="/log-in/signup" className="relative transition duration-300 hover:text-green-600 group">
+//                 Sign up
+//                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+//               </Link>
+//             </>
+//           )}
+//           <Link href="/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform">
+//             <HeartOutlined />
+//           </Link>
+//           <Link href="/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform">
+//             <ShoppingOutlined />
+//           </Link>
+//           <div className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+//           <Dropdown menu={userMenu} trigger={["hover"]} placement="bottom">
+//               <span className="relative transition duration-300 hover:text-green-600 group cursor-pointer">
+//                 {user?.name} {user?.surname}
+//                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
+//               </span>
+//             </Dropdown>
+//           </div>
+//         </nav>
+        
+
+//         <div className="lg:hidden flex items-center">
+//           <MenuOutlined className="text-3xl cursor-pointer" onClick={toggleMenu} />
+//         </div>
+//       </div>
+
+//       {isMenuOpen && (
+//         <div className="lg:hidden absolute top-16 left-0 w-full bg-white shadow-lg flex flex-col items-center py-5 gap-4 text-base md:text-lg font-serif italic">
+//           <Link href="/" className="hover:text-green-600">Home</Link>
+//           <Dropdown menu={{ items }} trigger={["click"]}>
+//             <span className="hover:text-green-600 cursor-pointer">
+//               <Space>Shop <DownOutlined /></Space>
+//             </span>
+//           </Dropdown>
+//           <Link href="/menu/desing" className="hover:text-green-600">Design</Link>
+//           {isAuthenticated ? (
+//             <span onClick={handleLogout} className="flex justify-center items-center gap-2">
+//             <LogoutOutlined /> Logout
+//           </span>
+//           ) : (
+//             <>
+//               <Link href="/log-in/login" className="hover:text-green-600">Login</Link>
+//               <Link href="/log-in/signup" className="hover:text-green-600">Sign up</Link>
+//             </>
+//           )}
+//         </div>
+//       )}
+//     </header>
+//   );
+// };
+
+// export default Header;
+
+// components/_notification
+// 'use client';
+// import React from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { Alert } from 'antd';
+// import { clearNotification } from '@/app/redux/features/notificationSlice';
+
+// const Notification = () => {
+//   const dispatch = useDispatch();
+//   const { alertMessage, alertType } = useSelector((state) => state.notification);
+
+//   if (!alertMessage) return null;
+
+//   return (
+//     <div className="fixed top-5 right-5 z-50 w-full max-w-[300px] sm:max-w-[400px] md:max-w-[450px] px-4">
+//       <Alert
+//         message={alertMessage}
+//         type={alertType}
+//         showIcon
+//         className="shadow-lg rounded-lg text-sm"
+//         style={{
+//           width: '100%',
+//           padding: '10px 15px',
+//           borderRadius: '8px',
+//           background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', // Mavi-ağ gradient fon
+//           color: '#004080', // Daha yumşak mavi ton
+//           border: '1px solid #b3d9ff',
+//           boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+//         }}
+//       />
+//       {/* 3 saniye sonra bildirim kapanır */}
+//       <button
+//         onClick={() => dispatch(clearNotification())}
+//         className="absolute top-2 right-2 text-white bg-transparent border-none cursor-pointer text-xl"
+//       >
+//         X
+//       </button>
+//     </div>
+//   );
+// };
+
+// export default Notification;
+
+// components/_rating
+// import React, { useState } from 'react';
+
+// const StarRating = ({ rating, onRatingChange }) => {
+//   const [hover, setHover] = useState(0);
+
+//   const handleClick = (starValue) => {
+//     onRatingChange(starValue);
+//   };
+
+//   return (
+//     <div className="flex space-x-1">
+//       {[...Array(5)].map((_, index) => {
+//         const starValue = index + 1;
+//         return (
+//           <svg
+//             key={starValue}
+//             className={`h-8 w-8 cursor-pointer transition-colors duration-200 ${
+//               starValue <= (hover || rating) ? 'text-yellow-500' : 'text-gray-300'
+//             }`}
+//             xmlns="http://www.w3.org/2000/svg"
+//             viewBox="0 0 20 20"
+//             fill="currentColor"
+//             onClick={() => handleClick(starValue)}
+//             onMouseEnter={() => setHover(starValue)}
+//             onMouseLeave={() => setHover(rating)}
+//           >
+//             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z" />
+//           </svg>
+//         );
+//       })}
+//     </div>
+//   );
+// };
+
+// export default StarRating;
+
+// components/_wishlist/WishlistIcons.jsx
+// 'use client';
+// import React from 'react';
+// import { CloseOutlined, ShoppingOutlined } from '@ant-design/icons';
+// import { useDispatch } from 'react-redux';
+// import { toggleWishlist } from '@/app/redux/features/wishlistSlice';
+// import { addToCart } from '@/app/redux/features/cartSlice';
+
+// const WishlistIcons = ({ item }) => {
+//   const dispatch = useDispatch();
+  
+//   const handleAddToCart = () => {
+//     dispatch(addToCart(item));
+//     alert('Added to cart!');
+//   };
+
+
+//  const showAlert = (message, type) => {
+//     setAlertMessage(message);
+//     setAlertType(type);
+//     setTimeout(() => {
+//       setAlertMessage(null);
+//     }, 3000);
+//   };
+
+//   const handleWishlistClick = () => {
+//     dispatch(toggleWishlist(product));
+//     showAlert(isInWishlist ? 'Removed from wishlist' : 'Added to wishlist', isInWishlist ? 'warning' : 'success');
+//   };
+//   return (
+//     <>
+//     {/* {alertMessage && (
+//         <div className="fixed top-5 right-5 z-50">
+//           <Alert 
+//             message={alertMessage} 
+//             type={alertType} 
+//             showIcon 
+//             className="shadow-lg rounded-lg text-sm"
+//             style={{ 
+//               width: 250, 
+//               padding: '10px 15px', 
+//               borderRadius: '8px',
+//               background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', // Mavi-ağ gradient fon
+//               color: '#004080', // Daha yumşaq mavi ton
+//               border: '1px solid #b3d9ff',
+//               boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)'
+//             }}
+//           />
+//         </div>
+//       )} */}
+//       <CloseOutlined onClick={() => dispatch(toggleWishlist(item))} className='text-red-500 text-lg cursor-pointer hover:scale-110 transition-transform' />
+//       <ShoppingOutlined onClick={handleAddToCart} className='text-blue-500 text-lg cursor-pointer hover:scale-110 transition-transform' />
+//     </>
+//   );
+// };
+
+// export default WishlistIcons;
+
+// components/cart/CartItem.jsx
+// 'use client';
+// import React from 'react';
+// import { CloseOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { toggleWishlist } from '@/app/redux/features/wishlistSlice';
+// import { increaseQuantity, decreaseQuantity, removeFromCart } from '@/app/redux/features/cartSlice';
+
+// const CartItem = ({ item }) => {
+//   const dispatch = useDispatch();
+//   const wishlist = useSelector((state) => state.wishlist.items);
+//   const isInWishlist = wishlist.some((w) => w.id === item.id);
+
+//   return (
+//     <div className="relative bg-white shadow-md rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6 w-full sm:w-[400px] md:w-[500px]">
+//       <div className="absolute top-2 right-2 flex gap-3">
+//         <span onClick={() => dispatch(toggleWishlist(item))} className="cursor-pointer text-xl">
+//           {isInWishlist ? (
+//             <HeartFilled className="text-red-500 hover:scale-110 transition-transform" />
+//           ) : (
+//             <HeartOutlined className="text-gray-500 hover:text-red-500 transition" />
+//           )}
+//         </span>
+//         <CloseOutlined onClick={() => dispatch(removeFromCart(item))} className="text-gray-500 text-lg cursor-pointer hover:text-red-500 transition" />
+//       </div>
+//       <img src={item.image} alt={item.title} className="w-[140px] h-[140px] object-contain rounded-lg sm:mr-6 mb-4 sm:mb-0" />
+//       <div className='flex flex-col flex-grow'>
+//         <p className="text-gray-700 font-semibold text-base">{item.title}</p>
+//         <p className="text-blue-600 font-medium text-sm">{item.category}</p>
+//         <p className="text-purple-600 font-bold text-xl">{item.price} AZN</p>
+//         <div className="flex items-center gap-3 mt-3">
+//           <button onClick={() => dispatch(decreaseQuantity(item))} className="bg-red-500 text-white px-2 py-1 rounded-md text-sm hover:bg-red-600 transition">-</button>
+//           <span className="text-lg font-bold">{item.quantity}</span>
+//           <button onClick={() => dispatch(increaseQuantity(item))} className="bg-green-500 text-white px-2 py-1 rounded-md text-sm hover:bg-green-600 transition">+</button>
+//         </div>
+//         <p className="mt-3 text-gray-900 font-bold text-lg">Total: {(item.price * item.quantity).toFixed(2)} AZN</p>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CartItem;
+
+// components/shema/utils/validationSchema.js
+// import * as Yup from "yup";
+
+// export const validationSchema = {
+//   signup: Yup.object({
+//     name: Yup.string().required("Name is required"),
+//     surname: Yup.string().required("Surname is required"),
+//     phone: Yup.string()
+//       .matches(/^\d{10}$/, "Phone number must be 10 digits")
+//       .required("Phone is required"),
+//     email: Yup.string().email("Invalid email").required("Email is required"),
+//     password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
+//     confirmPassword: Yup.string()
+//       .oneOf([Yup.ref("password")], "Passwords must match")
+//       .required("Confirm password is required"),
+//   }),
+
+//   login: Yup.object({
+//     email: Yup.string().email("Invalid email").required("Email is required"),
+//     password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
+//   }),
+// };
+
+// components/shema/LoginForm.jsx
+// "use client";
+
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { useFormik } from "formik";
+// import { useDispatch } from "react-redux";
+// import { login } from "@/app/redux/features/authSlice";
+// import * as Yup from "yup";
+// import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+
+// const LoginForm = () => {
+//   const [showPassword, setShowPassword] = useState(false);
+//   const router = useRouter();
+//   const dispatch = useDispatch();
+
+//   const formik = useFormik({
+//     initialValues: { email: "", password: "" },
+//     validationSchema: Yup.object({
+//       email: Yup.string().email("Invalid email").required("Email is required"),
+//       password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
+//     }),
+//     onSubmit: (values) => {
+//       const registeredUser = JSON.parse(localStorage.getItem("registeredUser"));
+//       if (registeredUser && registeredUser.email === values.email && registeredUser.password === values.password) {
+//         dispatch(login(registeredUser)); // Redux-a məlumatı göndər
+//         localStorage.setItem("user", JSON.stringify(registeredUser)); // LocalStorage-də də saxla
+//         router.push("/"); // Ana səhifəyə yönləndir
+//       } else {
+//         alert("Invalid credentials!");
+//       }
+//     }
+//   });
+
+//   return (
+//     <section className="flex flex-col items-center min-h-[70vh] p-4 bg-cover bg-no-repeat bg-[url('https://img.freepik.com/free-vector/watercolor-flowers-background-pastel-colors_79603-798.jpg')] bg-bottom">
+//       <h1 className="text-xl font-serif font-bold text-center mb-6">Login</h1>
+//       <div className="w-full max-w-md bg-green-800 rounded-lg shadow-lg p-6 sm:p-8">
+//         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+//           <InputField type="email" name="email" label="Email" formik={formik} />
+//           <InputField 
+//             type={showPassword ? "text" : "password"} 
+//             name="password" 
+//             label="Password" 
+//             formik={formik} 
+//             toggle={() => setShowPassword(!showPassword)} 
+//             showPassword={showPassword} 
+//           />
+//           <button type="submit" className="w-full p-3 bg-green-600 hover:bg-green-500 rounded-md text-white transition-all">
+//             Login
+//           </button>
+//         </form>
+//       </div>
+//     </section>
+//   );
+// };
+
+// const InputField = ({ type, name, label, formik, toggle, showPassword }) => (
+//   <div className="relative flex flex-col">
+//     <label className="text-green-300 font-bold">{label}</label>
+//     <div className="relative">
+//       <input
+//         type={type}
+//         name={name}
+//         className="p-2 rounded-md w-full pr-10 bg-white text-black outline-none focus:ring-2 focus:ring-green-400"
+//         placeholder={`Enter your ${label.toLowerCase()}`}
+//         onChange={formik.handleChange}
+//         onBlur={formik.handleBlur}
+//         value={formik.values[name] || ""}
+//       />
+//       {name === "password" && (
+//         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-600 text-lg" onClick={toggle}>
+//           {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+//         </span>
+//       )}
+//     </div>
+//     {formik.touched[name] && formik.errors[name] && <span className="text-red-400 text-xs">{formik.errors[name]}</span>}
+//   </div>
+// );
+
+// export default LoginForm;
+
+// components/shema/SignupForm.jsx
+// "use client";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { useDispatch } from "react-redux";
+// import { login } from "@/app/redux/features/authSlice"; // Redux action import edilir
+// import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+// import { useFormik } from "formik";
+// import * as Yup from "yup";
+// import { validationSchema } from "./utils/validationSchema";
+
+// const SignupForm = () => {
+//   const router = useRouter();
+//   const dispatch = useDispatch(); // Redux dispatch
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+//   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+//   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+
+//   const formik = useFormik({
+//     initialValues: {
+//       name: "",
+//       surname: "",
+//       phone: "",
+//       email: "",
+//       password: "",
+//       confirmPassword: "",
+//     },
+//     validationSchema: validationSchema.signup,
+    
+
+//       onSubmit: (values) => {
+//         console.log("Signup Successful", values);
+//         localStorage.setItem("registeredUser", JSON.stringify(values)); // Məlumatı saxla
+//         setTimeout(() => router.push("/log-in/login"), 1000); // Login səhifəsinə yönləndir
+//       },
+      
+
+      
+//   });
+
+//   return (
+//     <section className="size-full my-7 bg-[89%] bg-contain object-cover bg-no-repeat bg-[url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgbyfm9UVPfjptSGHeTF4_gz9ItC67DS8inz3gm9WdCTQOJQ_ow2qFkSI-JXcwdlzgNE&usqp=CAU)]">
+//       <div className="flex flex-col items-center">
+//         <h1 className="text-xl my-3 font-serif font-bold">Sign up</h1>
+//         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4 p-7 px-11 w-full max-w-[550px] rounded-md bg-green-800">
+          
+//           {["name", "surname"].map((field) => (
+//             <div key={field} className="flex flex-col">
+//               <label className="text-green-600 font-bold capitalize">{field}</label>
+//               <input
+//                 type="text"
+//                 name={field}
+//                 className="p-2 rounded-md"
+//                 placeholder={`Please enter your ${field}`}
+//                 onChange={formik.handleChange}
+//                 onBlur={formik.handleBlur}
+//                 value={formik.values[field]}
+//               />
+//               {formik.touched[field] && formik.errors[field] && (
+//                 <span className="text-red-400 text-xs">{formik.errors[field]}</span>
+//               )}
+//             </div>
+//           ))}
+  
+//           {["phone", "email"].map((field) => (
+//             <div key={field} className="flex flex-col">
+//               <label className="text-green-600 font-bold capitalize">{field}</label>
+//               <input
+//                 type={field === "email" ? "email" : "text"}
+//                 name={field}
+//                 className="p-2 rounded-md"
+//                 placeholder={`Please enter your ${field}`}
+//                 onChange={formik.handleChange}
+//                 onBlur={formik.handleBlur}
+//                 value={formik.values[field]}
+//               />
+//               {formik.touched[field] && formik.errors[field] && (
+//                 <span className="text-red-400 text-xs">{formik.errors[field]}</span>
+//               )}
+//             </div>
+//           ))}
+
+//           {[{ name: "password", show: showPassword, toggle: togglePasswordVisibility },
+//             { name: "confirmPassword", show: showConfirmPassword, toggle: toggleConfirmPasswordVisibility }
+//           ].map(({ name, show, toggle }) => (
+//             <div key={name} className="relative flex flex-col">
+//               <label className="text-green-600 font-bold">{name === "confirmPassword" ? "Confirm Password" : "Password"}</label>
+//               <div className="relative">
+//                 <input
+//                   type={show ? "text" : "password"}
+//                   name={name}
+//                   className="p-2 rounded-md w-full pr-10"
+//                   placeholder={`Please enter your ${name === "confirmPassword" ? "password again" : "password"}`}
+//                   onChange={formik.handleChange}
+//                   onBlur={formik.handleBlur}
+//                   value={formik.values[name]}
+//                 />
+//                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-600 text-lg" onClick={toggle}>
+//                   {show ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+//                 </span>
+//               </div>
+//               {formik.touched[name] && formik.errors[name] && (
+//                 <span className="text-red-400 text-xs">{formik.errors[name]}</span>
+//               )}
+//             </div>
+//           ))}
+//           <button type="submit" className="w-3/5 m-auto my-4 p-4 bg-green-600 hover:bg-green-500 rounded-md text-white">
+//             Sign up
+//           </button>
+//           <p className="text-white text-center mt-3">
+//             Already have an account?{" "}
+//             <span className="text-blue-400 cursor-pointer hover:underline" onClick={() => router.push("/pages/log-in/login")}>
+//               Log in
+//             </span>
+//           </p>
+//         </form>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default SignupForm;
+
+// components/shop/ShopIcons.jsx
+// 'use client';
+// import React, { useState } from 'react';
+// import { HeartOutlined, HeartFilled, ShoppingOutlined } from '@ant-design/icons';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { toggleWishlist } from '@/app/redux/features/wishlistSlice';
+// import { addToCart } from '@/app/redux/features/cartSlice';
+// import { setNotification } from '@/app/components/_notification/Notification';
+
+// const ShopIcons = ({ item }) => {
+//   const dispatch = useDispatch();
+//   const wishlist = useSelector((state) => state.wishlist.items);
+//   const isInWishlist = wishlist.some((w) => w.id === item.id);
+
+//   const [alertMessage, setAlertMessage] = useState(null); // alertMessage state
+//   const [alertType, setAlertType] = useState(null); // alertType state
+
+//   const handleAddToCart = () => {
+//     dispatch(addToCart(item));
+//     setAlertMessage('Added to cart!');
+//     setAlertType('success');
+//     setTimeout(() => {
+//       setAlertMessage(null);
+//     }, 3000);
+//   };
+
+//   return (
+//     <>
+      
+
+//       <span onClick={() => dispatch(toggleWishlist(item))} className='cursor-pointer text-lg'>
+//         {isInWishlist ? (
+//           <HeartFilled className='text-red-500 hover:scale-110 transition-transform' />
+//         ) : (
+//           <HeartOutlined className='text-gray-500 hover:scale-110 transition-transform' />
+//         )}
+//       </span>
+
+//       <ShoppingOutlined onClick={handleAddToCart} className='text-blue-500 text-lg cursor-pointer hover:scale-110 transition-transform' />
+//     </>
+//   );
+// };
+
+// export default ShopIcons;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// (pages)/homepage/carousel/page.jsx
+// import { Carousel } from 'antd';
+// import Link from 'next/link';
+
+// const categories = [
+//   { src: 'https://img.freepik.com/premium-photo/elegant-woman-orange-gown-with-ruffles-flowing-fabric_1346134-5800.jpg?w=1800', label: 'For women', link: '/pages/menu/women', textColor: 'text-white' },
+//   { src: 'https://nicolebaas.com/wp-content/uploads/2018/03/Kit-and-Ace-boston-mens-activewear-editorial-photographer-1003.jpg', label: 'For men', link: '/pages/menu/men', textColor: 'text-white' },
+//   { src: 'https://images.squarespace-cdn.com/content/v1/5bf07da11aef1de706d5b257/79484c84-ba4f-4e15-bba9-61648f2994ac/All-Saints-Childrens-Fashion-Photographer-Simon-Songhurst-Kids-Fashion-Photography-03.jpg', label: 'For kids', link: '/pages/menu/kids', textColor: 'text-white' },
+//   { src: 'https://cdn.shopify.com/s/files/1/0355/1805/files/kids-editorial-3.jpg?v=1592943001', label: 'For women', link: '/pages/menu/women', textColor: 'text-white' },
+//   { src: 'https://candicelamarandphotography.com/wp-content/uploads/sites/5014/2014/03/family-7053-1.jpg', label: 'For men', link: '/pages/menu/men', textColor: 'text-white' },
+//   { src: 'https://juniorstyle.net/wp/wp-content/uploads/2018/04/ed-colour-condition/editorial_cindy_james_colour_condition_manuela_kids_design-featured-image-1-570x380.jpg', label: 'For kids', link: '/pages/menu/kids', textColor: 'text-white' },
+//   { src: 'https://img.freepik.com/premium-photo/elegant-woman-coral-pink-flowing-dress_1346134-6113.jpg', label: 'For women', link: '/pages/menu/women', textColor: 'text-white' },
+//   { src: 'https://isabelscharenberg.com/sites/default/files/styles/gallery_full/public/2019-05/Andreas_Ortner_Elle_Men_Fashion_Editorial_03.jpg?itok=YWH73emu', label: 'For men', link: '/pages/menu/men', textColor: 'text-white' },
+//   { src: 'https://highendbeautyretouching.com/blog/images/gallery/news_preview2_90.jpg', label: 'For kids', link: '/pages/menu/kids', textColor: 'text-white' },
+
+// ];
+
+// const FashionCarousel = () => {
+//   return (
+//     <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-7">
+//       <Carousel autoplay dots={false} arrows>
+//         {categories.map(({ src, label, link, textColor }, index) => (
+//           <div key={index} className="relative h-[600px] sm:h-[700px] flex items-center justify-center overflow-hidden">
+//             <Link href={link} className="block w-full h-full relative">
+//               <img
+//                 src={src}
+//                 alt={label}
+//                 className="w-full h-full object-cover rounded-2xl shadow-lg cursor-pointer"
+//               />
+//               <span className={`absolute top-1/2 right-10 transform -translate-y-1/2 ${textColor} text-6xl sm:text-8xl font-extrabold tracking-wider drop-shadow-2xl`} style={{ fontFamily: 'Chalkduster, Brush Script MT, cursive' }}>
+//                 {label}
+//               </span>
+//             </Link>
+//           </div>
+//         ))}
+//       </Carousel>
+//       <style jsx>{`
+//         :global(.ant-carousel .slick-prev, .ant-carousel .slick-next) {
+//           width: 50px;
+//           height: 50px;
+//           background: rgba(255, 255, 255, 0.6);
+//           border-radius: 50%;
+//           transition: background 0.3s;
+//         }
+//         :global(.ant-carousel .slick-prev:hover, .ant-carousel .slick-next:hover) {
+//           background: rgba(255, 255, 255, 0.9);
+//         }
+//       `}</style>
+//     </div>
+//   );
+// };
+
+// export default FashionCarousel;
+
+// (pages)/homepage/home/Home.jsx
+// "use client";
+// import '@ant-design/compatible';
+// import { useEffect, useState } from "react";
+// import Carousel from "../carousel/page";
+// import StepForm from "../stepForm/form/page";
+// import Link from "next/link";
+// import { FacebookOutlined, InstagramOutlined, SendOutlined, StarFilled } from "@ant-design/icons";
+// import { Modal, Input, Button } from "antd";
+
+
+//  const Home = () => {
+//   const [showStepForm, setShowStepForm] = useState(false);
+//   const [modalVisible, setModalVisible] = useState(false);
+//   const [selectedTailor, setSelectedTailor] = useState(null);
+//   const [comments, setComments] = useState(() => {
+//     if (typeof window !== "undefined") {
+//       return JSON.parse(localStorage.getItem("tailorComments")) || {};
+//     }
+//     return {};
+//   });
+//   const [newComment, setNewComment] = useState("");
+
+//   useEffect(() => {
+//     localStorage.setItem("tailorComments", JSON.stringify(comments));
+//   }, [comments]);
+
+//   const tailors = [
+//     {
+//       name: "John Doe",
+//       experience: "10 years experience",
+//       description: "Expert in custom dresses and suits. Skilled in modern and traditional tailoring techniques.",
+//       rating: 5,
+//       image: "https://randomuser.me/api/portraits/men/1.jpg"
+//     },
+//     {
+//       name: "Jane Smith",
+//       experience: "8 years experience",
+//       description: "Specialist in wedding dresses and alterations. Known for attention to detail and craftsmanship.",
+//       rating: 4,
+//       image: "https://randomuser.me/api/portraits/women/2.jpg"
+//     },
+//     {
+//       name: "Michael Johnson",
+//       experience: "12 years experience",
+//       description: "Master tailor for all fabric types. Passionate about creating unique and stylish pieces.",
+//       rating: 5,
+//       image: "https://randomuser.me/api/portraits/men/3.jpg"
+//     }
+//   ];
+
+//   const addComment = () => {
+//     if (newComment.trim() && selectedTailor) {
+//       setComments(prev => ({
+//         ...prev,
+//         [selectedTailor.name]: [newComment, ...(prev[selectedTailor.name] || [])].slice(0, 5)
+//       }));
+//       setNewComment("");
+//     }
+//   };
+
+//   return (
+//     <main>
+//       <section>
+//         <div className="w-full h-full p-4 sm:p-7 bg-right bg-cover bg-no-repeat bg-fixed bg-transparent bg-[url('https://i.pinimg.com/736x/d3/ba/35/d3ba35a4f9f3c3d475b03671cb86b035.jpg')] flex flex-col items-center">
+//           <Carousel />
+//           {!showStepForm && (
+//             <img
+//               src="https://www.moodfabrics.com/media/StaticPageImages/20.png"
+//               alt="Open Step Form"
+//               className="cursor-pointer mt-5 w-[60%] sm:w-[40%] max-w-full h-auto"
+//               onClick={() => setShowStepForm(true)}
+//             />
+//           )}
+//           {showStepForm && (
+//             <div className="my-7 w-full">
+//               <StepForm onClose={() => setShowStepForm(false)} />
+//             </div>
+//           )}
+//           <div className="my-7 w-full">
+//             <Link href="/homepage/yourstyle">
+//               <img src="https://www.moodfabrics.com/blog/wp-content/uploads/Explore-Now.png" alt="go to yourstyle" className="cursor-pointer sm:w-[40%] max-w-full m-auto" />
+//             </Link>
+//           </div>
+//           <div className="m-7 max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-7">
+//             {tailors.map((tailor, index) => (
+//               <div key={index} className="bg-gradient-to-r from-blue-50 to-white p-5 sm:p-7 rounded-lg shadow-lg flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4" onClick={() => { setModalVisible(true); setSelectedTailor(tailor); }}>
+//                 <img src={tailor.image} alt={tailor.name} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-blue-300" />
+//                 <div className="text-center sm:text-left">
+//                   <h3 className="font-semibold text-lg text-blue-700">{tailor.name}</h3>
+//                   <p className="text-sm text-gray-600 font-medium">{tailor.experience}</p>
+//                   <p className="text-sm text-gray-500 italic">{tailor.description}</p>
+//                   <div className="flex justify-center sm:justify-start mt-2">
+//                     {Array.from({ length: tailor.rating }).map((_, i) => (
+//                       <StarFilled key={i} className="text-yellow-500 text-lg" />
+//                     ))}
+//                   </div>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//           <Modal open={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
+//             {selectedTailor && (
+//               <div className="text-center">
+//                 <img src={selectedTailor.image} alt={selectedTailor.name} className="w-32 h-32 rounded-full object-cover mx-auto" />
+//                 <h2 className="text-lg font-semibold mt-4">{selectedTailor.name}</h2>
+//                 <p className="text-gray-600">{selectedTailor.experience}</p>
+//                 <p className="text-gray-500 mt-2">{selectedTailor.description}</p>
+//                 <div className="flex justify-center mt-3">
+//                   {Array.from({ length: selectedTailor.rating }).map((_, i) => (
+//                     <StarFilled key={i} className="text-yellow-500 text-lg" />
+//                   ))}
+//                 </div>
+//                 <div className="mt-4">
+//                   <h3 className="text-md font-semibold">Comments</h3>
+//                   <ul className="text-gray-700 text-sm space-y-2 max-h-24 overflow-auto">
+//                   {(comments[selectedTailor.name] || []).map((comment, i) => (
+//                       <li key={i} className="border-b pb-1">{comment}</li>
+//                     ))}
+//                   </ul>
+//                   <Input.TextArea rows={2} placeholder="Write your comment here..." className="mt-4" value={newComment} onChange={(e) => setNewComment(e.target.value)} />
+//                   <Button className="mt-2 w-full" type="primary" onClick={addComment}>Add comments</Button>
+//                 </div>
+//                 <div className="flex justify-center space-x-4 mt-4">
+//                   <FacebookOutlined className="text-2xl text-blue-600 cursor-pointer" />
+//                   <InstagramOutlined className="text-2xl text-pink-500 cursor-pointer" />
+//                   <SendOutlined className="text-2xl text-blue-400 cursor-pointer" />
+//                 </div>
+//               </div>
+//             )}
+//           </Modal>
+//         </div>
+//       </section>
+//     </main>
+//   );
+// };
+
+// export default Home;
+
+// (pages)/homepage/stepForm/calculate/page.jsx
+// import { CloseOutlined } from "@ant-design/icons";
+
+// const Calculate = ({ waistSize, lengthSize, selectedImage, onClose }) => {
+//   const resultImages = {
+//     "https://www.moodfabrics.com/media/StaticPageImages/9.png": "https://www.moodfabrics.com/media/StaticPageImages/31.jpg",
+//     "https://www.moodfabrics.com/media/StaticPageImages/10.png": "https://www.moodfabrics.com/media/StaticPageImages/32.jpg",
+//     "https://www.moodfabrics.com/media/StaticPageImages/11.png": "https://www.moodfabrics.com/media/StaticPageImages/33.jpg",
+//     "https://www.moodfabrics.com/media/StaticPageImages/12.png": "https://www.moodfabrics.com/media/StaticPageImages/34.jpg",
+//   };
+
+//   const calculateMeasurements = () => {
+//     const radius = (waistSize / (2 * Math.PI)).toFixed(2);
+//     const fabricLength = (parseFloat(lengthSize) + parseFloat(radius)).toFixed(2);
+//     return { radius, fabricLength, fabricWidth: "Standard Width" };
+//   };
+
+//   const { radius, fabricLength, fabricWidth } = calculateMeasurements();
+
+//   return (
+//     <div className="relative mt-6 p-6 bg-[rgb(249,238,226)] shadow-lg rounded-lg flex flex-col items-center">
+//       <button className="absolute top-3 right-3 text-gray-600 hover:text-gray-900" onClick={onClose}>
+//         <CloseOutlined style={{ fontSize: "20px" }} />
+//       </button>
+//       <h2 className="text-2xl font-bold text-gray-800 border-b pb-2 text-center">Result</h2>
+//       <p className="text-lg text-gray-700 mt-3 text-center">In our expert opinion, we recommend:</p>
+//       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+//         {[{ label: "Waist Radius", value: `${radius} cm` },
+//           { label: "Fabric Length", value: `${fabricLength} cm` },
+//           { label: "Fabric Width", value: fabricWidth }
+//         ].map(({ label, value }) => (
+//           <div key={label} className="p-4 rounded-md shadow-md bg-white">
+//             <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
+//             <p className="text-gray-700 mt-1">{value}</p>
+//           </div>
+//         ))}
+//       </div>
+//       {selectedImage && resultImages[selectedImage] && (
+//         <img src={resultImages[selectedImage]} alt="Result" className="w-full mt-4 rounded-md object-contain" />
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Calculate;
+
+// (pages)/homepage/stepForm/form/page.jsx
+// import { useState } from "react";
+// import { CloseOutlined } from "@ant-design/icons";
+// import Calculate from "../calculate/page";
+
+// const StepForm = ({ onClose }) => {
+//   const [selectedImages, setSelectedImages] = useState({});
+//   const [step2Images, setStep2Images] = useState([
+//     "https://www.moodfabrics.com/media/StaticPageImages/15.png",
+//     "https://www.moodfabrics.com/media/StaticPageImages/16.png",
+//     "https://www.moodfabrics.com/media/StaticPageImages/17.png"
+//   ]);
+//   const [waistSize, setWaistSize] = useState(35);
+//   const [lengthSize, setLengthSize] = useState(0);
+//   const [showCalculate, setShowCalculate] = useState(false);
+
+//   const step3Images = [
+//     "https://www.moodfabrics.com/media/StaticPageImages/9.png",
+//     "https://www.moodfabrics.com/media/StaticPageImages/10.png",
+//     "https://www.moodfabrics.com/media/StaticPageImages/11.png",
+//     "https://www.moodfabrics.com/media/StaticPageImages/12.png"
+//   ];
+
+//   const steps = [
+//     {
+//       id: 1,
+//       label: "Preferred Unit of Measure",
+//       image: "https://www.moodfabrics.com/media/StaticPageImages/1.png",
+//       content: "Choose between inches or centimeters.",
+//       extraImages: [
+//         "https://www.moodfabrics.com/media/StaticPageImages/2.png",
+//         "https://www.moodfabrics.com/media/StaticPageImages/3.png"
+//       ]
+//     },
+//     {
+//       id: 2,
+//       label: "CHOOSE Desired Length",
+//       image: "https://www.moodfabrics.com/media/StaticPageImages/5.png",
+//       content: "Mini, midi, or maxi? It’s so hard to choose! You should probably just make one of each.",
+//       extraImages: step2Images
+//     },
+//     {
+//       id: 3,
+//       label: "Select Skirt Fullness",
+//       image: "https://www.moodfabrics.com/media/StaticPageImages/8.png",
+//       content: "Four types of fullness? Well, you’re probably going to need one of each fullness in each length.",
+//       extraImages: step3Images
+//     },
+//     {
+//       id: 4,
+//       label: "Waist Measurement",
+//       image: "https://www.moodfabrics.com/media/StaticPageImages/13.png",
+//       content: "To measure the circumference accurately, wrap the tape measure around your waist.",
+//       extraSelects: true
+//     }
+//   ];
+
+//   const handleImageSelect = (stepId, imageSrc) => {
+//     setSelectedImages((prev) => ({ ...prev, [stepId]: imageSrc }));
+
+//     if (stepId === 1) {
+//       setStep2Images(imageSrc.includes("2.png")
+//         ? [
+//             "https://www.moodfabrics.com/media/StaticPageImages/4.png",
+//             "https://www.moodfabrics.com/media/StaticPageImages/6.png",
+//             "https://www.moodfabrics.com/media/StaticPageImages/7.png"
+//           ]
+//         : [
+//             "https://www.moodfabrics.com/media/StaticPageImages/15.png",
+//             "https://www.moodfabrics.com/media/StaticPageImages/16.png",
+//             "https://www.moodfabrics.com/media/StaticPageImages/17.png"
+//           ]);
+//     }
+//   };
+
+//   return (
+//     <div className="w-full max-w-3xl mx-auto p-6 sm:p-7 shadow-2xl rounded-lg flex flex-col gap-6 bg-transparent relative z-10">
+//       {/* Close Button */}
+//       <button className="absolute top-3 right-3 text-gray-600 hover:text-gray-900" onClick={onClose}>
+//         <CloseOutlined style={{ fontSize: "20px" }} />
+//       </button>
+//       <h2 className="text-2xl font-bold text-center">Step Form</h2>
+//       {steps.map(({ id, label, image, content, extraImages, extraSelects }) => (
+//         <div key={id} className="flex flex-col sm:flex-row items-center p-6 rounded-lg shadow-md bg-transparent">
+//           <img src={image} alt={`Step ${id}`} className="w-16 h-auto sm:mr-4 mb-4 sm:mb-0" />
+//           <div className="flex-1">
+//             <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">{label}</h2>
+//             <p className="text-lg text-gray-700 mt-3">{content}</p>
+//             {extraImages && (
+//               <div className="flex gap-4 mt-3 flex-wrap justify-center sm:justify-start">
+//                 {extraImages.map((imgSrc, index) => (
+//                   <img
+//                     key={index}
+//                     src={imgSrc}
+//                     alt={`Extra ${index}`}
+//                     className={`w-24 sm:w-32 h-auto border border-gray-300 rounded-md cursor-pointer ${selectedImages[id] === imgSrc ? 'bg-[rgb(249,238,226)] border-2 border-orange-400' : 'bg-white'}`}
+//                     onClick={() => handleImageSelect(id, imgSrc)}
+//                   />
+//                 ))}
+//               </div>
+//             )}
+//             {extraSelects && (
+//               <div className="mt-4 flex flex-wrap gap-4 justify-center sm:justify-start">
+//                 {[{ label: "Waist", value: waistSize, setValue: setWaistSize, min: 40 },
+//                   { label: "Length", value: lengthSize, setValue: setLengthSize, min: 0 }
+//                 ].map(({ label, value, setValue, min }) => (
+//                   <div key={label} className="relative w-24 sm:w-28">
+//                     <input type="number" value={value} onChange={(e) => setValue(Math.max(min, Number(e.target.value)))} className="w-full h-10 border border-gray-300 rounded-md text-center appearance-none" />
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       ))}
+//       <div className="flex justify-center mt-6">
+//         <button onClick={() => setShowCalculate(true)} className="w-48 sm:w-60 h-14 sm:h-16 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-500 transition">
+//           Calculate
+//         </button>
+//       </div>
+//       {showCalculate && (
+//         <Calculate waistSize={waistSize} lengthSize={lengthSize} selectedImage={selectedImages[3]} onClose={() => setShowCalculate(false)} />
+//       )}
+//     </div>
+//   );
+// };
+
+// export default StepForm;
+
+// (pages)/homepage/yourstyle/page.jsx
+// 'use client';
+// import React, { useEffect, useState, useMemo } from 'react';
+// import { Modal, Spin, Carousel } from 'antd';
+// import { CloseOutlined } from '@ant-design/icons';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchDessing } from '@/app/redux/features/dessingSlice';
+// import 'swiper/css';
+
+// const Page = () => {
+//   const dispatch = useDispatch();
+//   const { data, status, error } = useSelector((state) => state.dessing);
+//   const [selectedCategory, setSelectedCategory] = useState(null);
+//   const [selectedItem, setSelectedItem] = useState(null);
+
+//   useEffect(() => {
+//     if (status === 'idle') dispatch(fetchDessing());
+//   }, [status, dispatch]);
+
+//   const categoryImages = {
+//     dress: "https://www.moodfabrics.com/blog/wp-content/uploads/Classic-Barbershop-Logo.png",
+//     pants: "https://www.moodfabrics.com/blog/wp-content/uploads/Classic-Barbershop-Logo-8.png",
+//     skirt: "https://www.moodfabrics.com/blog/wp-content/uploads/Classic-Barbershop-Logo-3.png",
+//     bodysuit: "https://www.moodfabrics.com/blog/wp-content/uploads/Classic-Barbershop-Logo-9.png"
+//   };
+
+//   const categoryHeaders = {
+//     dress: "https://www.moodfabrics.com/blog/wp-content/uploads/Dress-Patterns.png",
+//     pants: "https://www.moodfabrics.com/blog/wp-content/uploads/Dress-Patterns-2.png",
+//     skirt: "https://www.moodfabrics.com/blog/wp-content/uploads/Dress-Patterns-3.png",
+//     bodysuit: "https://www.moodfabrics.com/blog/wp-content/uploads/Dress-Patterns-4.png"
+//   };
+
+//   const filteredCategories = useMemo(() =>
+//     data.filter(category => category.category && ['dress', 'pants', 'skirt', 'bodysuit'].includes(category.category.toLowerCase())),
+//   [data]);
+
+//   if (status === 'loading') return <div className="flex justify-center items-center h-screen"><Spin size="large" /></div>;
+//   if (status === 'failed') return <div className="text-red-500 text-center font-semibold">Error: {error}</div>;
+
+//   return (
+//     <div className="container mx-auto p-4 sm:p-6 bg-[url('https://static.vecteezy.com/system/resources/previews/008/680/979/non_2x/floral-with-watercolor-pastel-background-free-vector.jpg')]"><div className="mb-6">
+//         <img src="https://www.moodfabrics.com/blog/wp-content/uploads/Shop-New-Products-Website-Banner-Brown-White-Tan.png" alt="Banner" className="m-auto sm:h-40 object-cover rounded-lg" />
+//       </div>
+//       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+//         {Object.keys(categoryImages).map((category) => (
+//           <div key={category} className="text-center p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer" onClick={() => setSelectedCategory(category)}>
+//             <img src={categoryImages[category]} alt={category} className="w-full h-32 sm:h-48 object-cover rounded-lg shadow-md" />
+//           </div>
+//         ))}
+//       </div>
+      
+//       {selectedCategory && (
+//         <div className="mt-6 p-4 sm:p-6 bg-white rounded-lg relative">
+//           <button className="absolute top-2 right-2 text-gray-600 hover:text-gray-900" onClick={() => setSelectedCategory(null)}>
+//             <CloseOutlined className="text-xl" />
+//           </button>
+//           <img src={categoryHeaders[selectedCategory]} alt={selectedCategory} className="m-auto sm:h-32 object-cover rounded-lg" />
+//           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4">
+//             {filteredCategories
+//               .filter(item => item.category.toLowerCase() === selectedCategory)
+//               .map(item => (
+//                 <div key={item.id} className="text-center m-auto" onClick={() => setSelectedItem(item)}>
+//                   {item.image?.length > 0 ? (
+//                     <img src={item.image[0]} alt={selectedCategory} className="mt-7 sm:h-48 object-cover cursor-pointer" />
+//                   ) : (
+//                     <div className="w-full h-32 sm:h-48 flex items-center justify-center bg-gray-300 rounded-lg">No Image</div>
+//                   )}
+//                 </div>
+//             ))}
+//           </div>
+//         </div>
+//       )}
+
+//       {selectedItem && selectedItem.image.length > 1 && (
+//         <Modal
+//           open={!!selectedItem}
+//           onCancel={() => setSelectedItem(null)}
+//           footer={null}
+//         >
+//           <Carousel autoplay>
+//             {selectedItem.image.filter((_, index) => index !== 0).map((img, index) => (
+//               <div key={index}>
+//                 <img src={img} alt={`Slide ${index}`} className="w-full sm:h-96 object-contain rounded-lg" />
+//               </div>
+//             ))}
+//           </Carousel>
+//         </Modal>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Page;
+
+// (pages)/icons/addCart/page.js
+// 'use client';
+// import React from 'react';
+// import { useSelector } from 'react-redux';
+// import CartItem from '@/app/components/cart/CartItem';
+
+// const CartPage = () => {
+//   const cart = useSelector((state) => state.cart.items);
+
+//   return (
+//     <div className='px-4 sm:px-6 md:px-8 container mx-auto p-6'>
+//       <h1 className="text-3xl font-bold mb-6 text-center">Shop</h1>
+//       {cart.length > 0 ? (
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+//           {cart.map((item) => <CartItem key={item.id} item={item} />)}
+//         </div>
+//       ) : (
+//         <p className="text-center text-gray-500">Empty basket</p>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default CartPage;
+
+// (pages)/icons/wishlist/page.js
+// import Box from '@/app/components/_box/Box';
+
+// const Wishlist = () => (
+//   <div className="px-4 sm:px-6 md:px-8">
+//     <h2 className="text-center text-3xl sm:text-4xl font-bold my-4">Favorite products</h2>
+//     <Box wishlistPage={true} />
+//   </div>
+// );
+
+// export default Wishlist;
+
+// (pages)/log-in/login/page.jsx
+// import LoginForm from "@/app/components/shema/LoginForm";
+
+// const LoginPage = () => {
+//   return (
+//     <div>
+//       <LoginForm />
+//     </div>
+//   );
+// };
+
+// export default LoginPage;
+
+// (pages)/log-in/signup/page.jsx
+// import SignupForm from "@/app/components/shema/SignupForm";
+
+// const SignupPage = () => {
+//   return (
+//     <div>
+//       <SignupForm />
+//     </div>
+//   );
+// };
+
+// export default SignupPage;
+
+// (pages)/menu/desing/page.jsx
+// 'use client';
+// import { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchDessing } from "@/app/redux/features/dessingSlice";
+// import { Spin } from "antd";
+// import { CloseCircleOutlined } from "@ant-design/icons";
+
+// const categories = ["Body", "Sleeve", "Skirt Style", "Your Dress"];
+
+// const sleeveImages = [
+//   "https://files.ecommercedns.uk/231423/bb1f2b82365463dc467670b13df36559.png",
+//   "https://files.ecommercedns.uk/231423/e218f8894ffaf25d7201046d69a876bb.png",
+//   "https://files.ecommercedns.uk/231423/1e4a677fb5e3182660f0f9b92d858257.png",
+//   "https://files.ecommercedns.uk/231423/526e390cb71f410b5cb2d36bb906dd57.png",
+//   "https://files.ecommercedns.uk/231423/77f0f8c064a2e342ed03550cc49b9e4d.png",
+//   "https://files.ecommercedns.uk/231423/269cde95f8ba637b7e9e06702bcca6fd.png",
+//   "https://files.ecommercedns.uk/231423/673fdadc31b4ee2d6dd63105587aebd5.png",
+//   "https://files.ecommercedns.uk/231423/745e98399ab8443e8c971f51e891814e.png",
+//   "https://files.ecommercedns.uk/231423/7911987de32f354f6e87a024b4bd3dd2.png",
+//   "https://files.ecommercedns.uk/231423/f74f0d32c0d21e7ea2efa67e72b13eb5.png",
+//   "https://files.ecommercedns.uk/231423/3fe68a7a4332d697319535040ea4d312.png",
+//   "https://files.ecommercedns.uk/231423/0b57f4c06889452cd6336216c42c19a6.png",
+//   "https://files.ecommercedns.uk/231423/80935a276f0359831210ea477699af9c.png"
+// ];
+
+// const DessingPage = () => {
+//   const dispatch = useDispatch();
+//   const { data, status, error } = useSelector((state) => state.dessing);
+//   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+//   const [selectedItems, setSelectedItems] = useState(() => {
+//     if (typeof window !== "undefined") {
+//       return JSON.parse(localStorage.getItem("selectedItems")) || {};
+//     }
+//     return {};
+//   });
+//   const [savedSelections, setSavedSelections] = useState([]);
+
+//   useEffect(() => {
+//     if (data.length === 0) {
+//       dispatch(fetchDessing());
+//     }
+//   }, [dispatch, data.length]);
+
+//   useEffect(() => {
+//     localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+//   }, [selectedItems]);
+
+//   useEffect(() => {
+//     if (typeof window !== "undefined") {
+//       const storedSelections = JSON.parse(localStorage.getItem("savedSelections")) || [];
+//       setSavedSelections(storedSelections);
+  
+//       // Əgər seçimlər varsa, sonuncusunu `Your Dress` kimi göstər, yoxdursa `Your Dress`-i sıfırla
+//       if (storedSelections.length > 0) {
+//         setSelectedItems(prev => ({ ...prev, "Your Dress": storedSelections[storedSelections.length - 1]["Your Dress"] }));
+//       } else {
+//         setSelectedItems(prev => {
+//           const newState = { ...prev };
+//           delete newState["Your Dress"]; // Boşdursa, Your Dress-i sil
+//           return newState;
+//         });
+//       }
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     localStorage.setItem("savedSelections", JSON.stringify(savedSelections));
+//   }, [savedSelections]);
+
+//   const handleSelection = (category, image) => {
+//     if (!data || data.length === 0) return;
+
+//     setSelectedItems((prev) => {
+//       if (category === "Sleeve") {
+//         const newIndex = data.filter(item => item.category === "Sleeve").findIndex(item => item.image === image);
+//         return { ...prev, Sleeve: sleeveImages[newIndex] || image };
+//       }
+//       return {
+//         ...prev,
+//         [category]: image,
+//       };
+//     });
+//   };
+
+//   const resetSelection = () => {
+//     setSelectedItems((prev) => {
+//       const updatedItems = { ...prev };
+//       Object.keys(updatedItems).forEach((key) => {
+//         if (key !== "Your Dress") {
+//           delete updatedItems[key];
+//         }
+//       });
+//       return updatedItems;
+//     });
+//   };
+
+//   const saveSelection = () => {
+//     if (savedSelections.length < 6) {
+//       setSavedSelections((prev) => {
+//         const updatedSelections = [...prev, JSON.parse(JSON.stringify(selectedItems))];
+//         localStorage.setItem("savedSelections", JSON.stringify(updatedSelections));
+//         return updatedSelections;
+//       });
+//     }
+//   };
+
+//   const removeSavedSelection = (index) => {
+//     setSavedSelections((prev) => {
+//       const updatedSelections = prev.filter((_, i) => i !== index);
+//       localStorage.setItem("savedSelections", JSON.stringify(updatedSelections));
+//       return updatedSelections;
+//     });
+//   };
+
+//   if (status === "loading") return <Spin size="large" />;
+//   if (status === "failed") return <p>Error: {error}</p>;
+
+//   return (
+//     <div className="relative min-h-screen bg-cover bg-center px-4 md:px-6 lg:px-8 bg-[url('https://www.creativefabrica.com/wp-content/uploads/2021/10/29/Abstract-Watercolor-Background-Design-Graphics-19383758-1.jpg')]">
+//       <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto h-auto p-4 md:p-6 bg-gray-100 rounded-lg shadow-lg shadow-green-300/80">
+//         <div className="relative w-full md:w-1/2 p-4 bg-gray-100 rounded-lg shadow-md">
+//           <img
+//             src="https://files.ecommercedns.uk/231423/3ef155cdbc4291b907e11eda1abb7dd6.png"
+//             alt="Dress Preview"
+//             className="w-full h-auto object-contain rounded-lg"
+//           />
+//           {Object.entries(selectedItems).map(([category, image], index) => (
+//             category !== "Your Dress" && (
+//               <img
+//                 key={index}
+//                 src={image}
+//                 alt="Overlay"
+//                 className={`absolute object-contain ${
+//                   category === "Body" ? "w-[20%] h-[30%] top-[13%] left-[40%]" :
+//                     category === "Sleeve" ? "w-[90%] h-full bottom-[2%] left-[5%] shadow-lg" :
+//                       category === "Skirt Style" ? "w-[54%] h-[40%] bottom-[29%] left-[23%]" :
+//                         "w-full h-full"
+//                   }`}
+//               />
+//             )
+//           ))}
+//         </div>
+//         <div className="flex flex-col w-full mt-7 md:w-1/2 p-4 bg-gray-100 rounded-lg shadow-md">
+//           <div className="flex flex-wrap gap-3 justify-start">
+//             {categories.map((category) => (
+//               <button
+//                 key={category}
+//                 className={`px-3 py-1 rounded-lg font-semibold transition-all ${selectedCategory === category ? "shadow-lg shadow-green-500/80" : "shadow-sm"}`}
+//                 onClick={() => setSelectedCategory(category)}
+//               >
+//                 {category}
+//               </button>
+//             ))}
+//           </div>
+//           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
+//             {data
+//               .filter((item) => item.category === selectedCategory)
+//               .map((item) => (
+//                 <label
+//                   key={item.id}
+//                   className={`p-3 border rounded-lg w-20 h-20 flex flex-col items-center justify-center overflow-hidden cursor-pointer shadow-md transition-all ${selectedItems[selectedCategory] === item.image ? "shadow-green-500/80" : ""}`}
+//                   onClick={() => handleSelection(selectedCategory, item.image)}
+//                 >
+
+
+ 
+        
+        
+
+
+//                   <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
+//                 </label>
+//               ))}
+//           </div>
+ 
+//           {selectedCategory === "Your Dress" && savedSelections.length > 0 && (
+//             <div className="grid grid-cols-3 gap-2">
+//               {savedSelections.map((selection, index) => (
+//                 <div key={index} className="p-2 border rounded-lg bg-white shadow-md relative w-32 h-40 flex items-center justify-center">
+//                   <img
+//                     src="https://files.ecommercedns.uk/231423/3ef155cdbc4291b907e11eda1abb7dd6.png"
+//                     alt="Saved Dress"
+//                     className="w-32 h-full object-cover rounded-lg"
+//                   />
+//                   {Object.entries(selection).map(([category, image], i) => (
+//                     category !== "hoverIndex" && (
+//                       <img
+//                         key={i}
+//                         src={image}
+//                         alt="Overlay"
+//                         className={`absolute object-contain ${category === "Body" ? "w-[20%] h-[30%] top-[10%] left-[40%] z-10" :
+//                             category === "Sleeve" ? "size-full bottom-[3%] z-10" :
+//                               category === "Skirt Style" ? "w-[50%] h-[41%] bottom-[33%] left-[25%] z-0" :
+//                                 "w-full h-full"
+//                           }`}
+//                       />
+//                     )
+//                   ))}
+//                   <button
+//                     className="absolute bottom-2 right-2 text-red-500 p-1 rounded-full"
+//                     onClick={(e) => {
+//                       e.stopPropagation();
+//                       removeSavedSelection(index);
+//                     }}
+//                   >
+//                     <CloseCircleOutlined />
+//                   </button>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
+
+//           <div className="flex justify-between mt-4 px-6">
+//             <button onClick={saveSelection} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Save</button>
+//             <button onClick={resetSelection} className="px-4 py-2 bg-red-500 text-white rounded-lg">Reset</button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default DessingPage;  
+
+// (pages)/menu/kids/page.jsx
+// 'use client';
+// import React, { useState, useEffect } from 'react';
+// import { Input, Button } from 'antd';
+// import { SearchOutlined, FilterOutlined, CloseOutlined } from '@ant-design/icons';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchProduct } from '@/app/redux/features/productSlice';
+// import Box from '@/app/components/_box/Box';
+
+// const KidsPage = () => {
+//   const dispatch = useDispatch();
+//   const { data, status } = useSelector((state) => state.product);
+//   const [visible, setVisible] = useState(false);
+//   const [selectedCategory, setSelectedCategory] = useState(null);
+//   const [selectedColors, setSelectedColors] = useState([]);
+//   const [filteredProducts, setFilteredProducts] = useState([]);
+
+//   useEffect(() => {
+//     if (status === 'idle') {
+//       dispatch(fetchProduct());
+//     }
+//   }, [dispatch, status]);
+
+//   useEffect(() => {
+//     let filtered = data.filter(item => item.gender === 'Kids');
+//     if (selectedCategory) {
+//       filtered = filtered.filter(item => item.categories === selectedCategory);
+//     }
+//     if (selectedColors.length) {
+//       filtered = filtered.filter(item => selectedColors.includes(item.color));
+//     }
+//     setFilteredProducts(filtered);
+//   }, [selectedCategory, selectedColors, data]);
+
+//   const categories = ['Pencek', 'Salvar', 'Koynek', 'Don'];
+//   const availableColors = selectedCategory 
+//     ? [...new Set(data.filter(item => item.categories === selectedCategory).map(item => item.color))] 
+//     : [...new Set(data.map(item => item.color))];
+
+//   const handleCategoryChange = (category) => {
+//     setSelectedCategory(category);
+//     setSelectedColors([]);
+//   };
+
+//   const handleColorChange = (color) => {
+//     setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
+//   };
+
+//   const resetFilters = () => {
+//     setSelectedCategory(null);
+//     setSelectedColors([]);
+//   };
+
+//   return (
+//     <div className="bg-[url('https://lifencolors.in/cdn/shop/files/4_057e949c-7fca-4a68-b453-8d16f439638b.webp?v=1726034492&width=1946')] bg-cover bg-fixed bg-center min-h-screen py-5 flex flex-col items-center bg-green-50 px-4 sm:px-6 md:px-8">
+//       <div className="flex flex-col sm:flex-row justify-center gap-4 items-center mb-5 w-full max-w-2xl">
+//         <Input
+//           placeholder="Search for products..."
+//           prefix={<SearchOutlined />}
+//           className='shadow-lg shadow-green-500/80 border-none w-full sm:w-[400px] h-[35px]'
+//         />
+//         <Button
+//           icon={<FilterOutlined />}
+//           onClick={() => setVisible(true)} 
+//           className='text-sm py-4 px-6 shadow-lg shadow-green-500/80'
+//         >
+//           Filter
+//         </Button>
+//       </div>
+
+//       {visible && (
+//         <div className="fixed top-0 right-0 w-72 h-full bg-gradient-to-b from-green-100 to-white p-4 shadow-lg overflow-auto z-50 rounded-l-lg">
+//           <div className="flex justify-between items-center border-b pb-2 mb-3">
+//             <h3 className="text-gray-700 font-semibold italic">Filter</h3>
+//             <Button icon={<CloseOutlined />} onClick={() => setVisible(false)} className="text-gray-500 hover:text-black border-none shadow-lg shadow-green-500/80" />
+//           </div>
+
+//           <div className="mb-4">
+//             <h4 className="text-gray-700 font-semibold italic mb-2">Category</h4>
+//             <div className="flex flex-wrap gap-2">
+//               {categories.map(category => (
+//                 <button 
+//                   key={category} 
+//                   className={`text-gray-700 italic border rounded-md px-3 py-1 text-sm transition-all ${
+//                     selectedCategory === category ? "bg-green-300" : "hover:bg-gray-100"
+//                   }`}
+//                   onClick={() => handleCategoryChange(category)}
+//                 >
+//                   {category}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div>
+//             <h4 className="text-gray-700 font-semibold italic mb-2">Color</h4>
+//             <div className="flex flex-wrap gap-2">
+//               {availableColors.map(color => (
+//                 <button 
+//                   key={color} 
+//                   className={`text-gray-700 italic border rounded-md px-3 py-1 text-sm transition-all ${
+//                     selectedColors.includes(color) ? "bg-green-300" : "hover:bg-gray-100"
+//                   }`}
+//                   onClick={() => handleColorChange(color)}
+//                 >
+//                   {color}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div className="mt-4 flex gap-3">
+//             <Button type="primary" onClick={() => setVisible(false)} className="w-full italic text-black border-green-300 bg-green-200 shadow-lg shadow-green-500/80">Apply</Button>
+//             <Button onClick={resetFilters} className="w-full italic border-green-300 shadow-lg shadow-green-500/80">Reset</Button>
+//           </div>
+//         </div>
+//       )}
+
+//       <div className="flex flex-col items-center justify-center w-full">
+//         {filteredProducts.length > 0 ? <Box filteredData={filteredProducts} /> : <p className="text-center text-gray-500">Not Found</p>}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default KidsPage;
+
+// (pages)/menu/men/page.jsx
+// 'use client';
+// import React, { useState, useEffect } from 'react';
+// import { Input, Button } from 'antd';
+// import { SearchOutlined, FilterOutlined, CloseOutlined } from '@ant-design/icons';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchProduct } from '@/app/redux/features/productSlice';
+// import Box from '@/app/components/_box/Box';
+
+// const MenPage = () => {
+//   const dispatch = useDispatch();
+//   const { data, status } = useSelector((state) => state.product);
+//   const [visible, setVisible] = useState(false);
+//   const [selectedCategory, setSelectedCategory] = useState(null);
+//   const [selectedColors, setSelectedColors] = useState([]);
+//   const [filteredProducts, setFilteredProducts] = useState([]);
+
+//   useEffect(() => {
+//     if (status === 'idle') {
+//       dispatch(fetchProduct());
+//     }
+//   }, [dispatch, status]);
+
+//   useEffect(() => {
+//     let filtered = data.filter(item => item.gender === 'Men');
+//     if (selectedCategory) {
+//       filtered = filtered.filter(item => item.categories === selectedCategory);
+//     }
+//     if (selectedColors.length) {
+//       filtered = filtered.filter(item => selectedColors.includes(item.color));
+//     }
+//     setFilteredProducts(filtered);
+//   }, [selectedCategory, selectedColors, data]);
+
+//   const categories = ['Pencek', 'Salvar', 'Koynek'];
+//   const availableColors = selectedCategory 
+//     ? [...new Set(data.filter(item => item.categories === selectedCategory).map(item => item.color))] 
+//     : [...new Set(data.map(item => item.color))];
+
+//   const handleCategoryChange = (category) => {
+//     setSelectedCategory(category);
+//     setSelectedColors([]);
+//   };
+
+//   const handleColorChange = (color) => {
+//     setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
+//   };
+
+//   const resetFilters = () => {
+//     setSelectedCategory(null);
+//     setSelectedColors([]);
+//   };
+
+//   return (
+//     <div className="bg-[url('https://lifencolors.in/cdn/shop/files/4_057e949c-7fca-4a68-b453-8d16f439638b.webp?v=1726034492&width=1946')] bg-cover bg-fixed bg-center min-h-screen py-5 flex flex-col items-center bg-green-50 px-4 sm:px-6 md:px-8">
+//       <div className="flex flex-col sm:flex-row justify-center gap-4 items-center mb-5 w-full max-w-2xl">
+//         <Input
+//           placeholder="Search for products..."
+//           prefix={<SearchOutlined />}
+//           className='shadow-lg shadow-green-500/80 border-none w-full sm:w-[400px] h-[35px]'
+//         />
+//         <Button
+//           icon={<FilterOutlined />}
+//           onClick={() => setVisible(true)} 
+//           className='text-sm py-4 px-6 shadow-lg shadow-green-500/80'
+//         >
+//           Filter
+//         </Button>
+//       </div>
+
+//       {visible && (
+//         <div className="fixed top-0 right-0 w-72 h-full bg-gradient-to-b from-green-100 to-white p-4 shadow-lg overflow-auto z-50 rounded-l-lg">
+//           <div className="flex justify-between items-center border-b pb-2 mb-3">
+//             <h3 className="text-gray-700 font-semibold italic">Filter</h3>
+//             <Button icon={<CloseOutlined />} onClick={() => setVisible(false)} className="text-gray-500 hover:text-black border-none shadow-lg shadow-green-500/80" />
+//           </div>
+
+//           <div className="mb-4">
+//             <h4 className="text-gray-700 font-semibold italic mb-2">Category</h4>
+//             <div className="flex flex-wrap gap-2">
+//               {categories.map(category => (
+//                 <button 
+//                   key={category} 
+//                   className={`text-gray-700 italic border rounded-md px-3 py-1 text-sm transition-all ${
+//                     selectedCategory === category ? "bg-green-300" : "hover:bg-gray-100"
+//                   }`}
+//                   onClick={() => handleCategoryChange(category)}
+//                 >
+//                   {category}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div>
+//             <h4 className="text-gray-700 font-semibold italic mb-2">Color</h4>
+//             <div className="flex flex-wrap gap-2">
+//               {availableColors.map(color => (
+//                 <button 
+//                   key={color} 
+//                   className={`text-gray-700 italic border rounded-md px-3 py-1 text-sm transition-all ${
+//                     selectedColors.includes(color) ? "bg-green-300" : "hover:bg-gray-100"
+//                   }`}
+//                   onClick={() => handleColorChange(color)}
+//                 >
+//                   {color}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div className="mt-4 flex gap-3">
+//             <Button type="primary" onClick={() => setVisible(false)} className="w-full italic text-black border-green-300 bg-green-200 shadow-lg shadow-green-500/80">Apply</Button>
+//             <Button onClick={resetFilters} className="w-full italic border-green-300 shadow-lg shadow-green-500/80">Reset</Button>
+//           </div>
+//         </div>
+//       )}
+
+//       <div className="flex flex-col items-center justify-center w-full">
+//         {filteredProducts.length > 0 ? <Box filteredData={filteredProducts} /> : <p className="text-center text-gray-500">Not Found</p>}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default MenPage;
+
+// (pages)/menu/women/page.jsx
+// 'use client';
+// import React, { useState, useEffect } from 'react';
+// import { Input, Button } from 'antd';
+// import { SearchOutlined, FilterOutlined, CloseOutlined } from '@ant-design/icons';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchProduct } from '@/app/redux/features/productSlice';
+// import Box from '@/app/components/_box/Box';
+
+// const WomenPage = () => {
+//   const dispatch = useDispatch();
+//   const { data, status } = useSelector((state) => state.product);
+//   const [visible, setVisible] = useState(false);
+//   const [selectedCategory, setSelectedCategory] = useState(null);
+//   const [selectedColors, setSelectedColors] = useState([]);
+//   const [filteredProducts, setFilteredProducts] = useState([]);
+
+//   useEffect(() => {
+//     if (status === 'idle') {
+//       dispatch(fetchProduct());
+//     }
+//   }, [dispatch, status]);
+
+//   useEffect(() => {
+//     let filtered = data.filter(item => item.gender === 'Women');
+//     if (selectedCategory) {
+//       filtered = filtered.filter(item => item.categories === selectedCategory);
+//     }
+//     if (selectedColors.length) {
+//       filtered = filtered.filter(item => selectedColors.includes(item.color));
+//     }
+//     setFilteredProducts(filtered);
+//   }, [selectedCategory, selectedColors, data]);
+
+//   const categories = ['Pencek', 'Salvar', 'Don', 'Etek', 'Koynek', 'Bluz', 'Kardiqan', 'Sviter', 'Palto'];
+//   const availableColors = selectedCategory 
+//     ? [...new Set(data.filter(item => item.categories === selectedCategory).map(item => item.color))] 
+//     : [...new Set(data.map(item => item.color))];
+
+//   const handleCategoryChange = (category) => {
+//     setSelectedCategory(category);
+//     setSelectedColors([]);
+//   };
+
+//   const handleColorChange = (color) => {
+//     setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
+//   };
+
+//   const resetFilters = () => {
+//     setSelectedCategory(null);
+//     setSelectedColors([]);
+//   };
+
+//   return (
+//     <div className="bg-[url('https://lifencolors.in/cdn/shop/files/4_057e949c-7fca-4a68-b453-8d16f439638b.webp?v=1726034492&width=1946')] bg-cover bg-fixed bg-center min-h-screen py-5 flex flex-col items-center bg-green-50 px-4 sm:px-6 md:px-8">
+//       <div className="flex flex-col sm:flex-row justify-center gap-4 items-center mb-5 w-full max-w-2xl">
+//         <Input
+//           placeholder="Search for products..."
+//           prefix={<SearchOutlined />}
+//           className='shadow-lg shadow-green-500/80 border-none w-full sm:w-[400px] h-[35px]'
+//         />
+//         <Button
+//           icon={<FilterOutlined />}
+//           onClick={() => setVisible(true)} 
+//           className='text-sm py-4 px-6 shadow-lg shadow-green-500/80'
+//         >
+//           Filter
+//         </Button>
+//       </div>
+
+//       {visible && (
+//         <div className="fixed top-0 right-0 w-72 h-full bg-gradient-to-b from-green-100 to-white p-4 shadow-lg overflow-auto z-50 rounded-l-lg">
+//           <div className="flex justify-between items-center border-b pb-2 mb-3">
+//             <h3 className="text-gray-700 font-semibold italic">Filter</h3>
+//             <Button icon={<CloseOutlined />} onClick={() => setVisible(false)} className="text-gray-500 hover:text-black border-none shadow-lg shadow-green-500/80" />
+//           </div>
+
+//           <div className="mb-4">
+//             <h4 className="text-gray-700 font-semibold italic mb-2">Category</h4>
+//             <div className="flex flex-wrap gap-2">
+//               {categories.map(category => (
+//                 <button 
+//                   key={category} 
+//                   className={`text-gray-700 italic border rounded-md px-3 py-1 text-sm transition-all ${
+//                     selectedCategory === category ? "bg-green-300" : "hover:bg-gray-100"
+//                   }`}
+//                   onClick={() => handleCategoryChange(category)}
+//                 >
+//                   {category}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div>
+//             <h4 className="text-gray-700 font-semibold italic mb-2">Color</h4>
+//             <div className="flex flex-wrap gap-2">
+//               {availableColors.map(color => (
+//                 <button 
+//                   key={color} 
+//                   className={`text-gray-700 italic border rounded-md px-3 py-1 text-sm transition-all ${
+//                     selectedColors.includes(color) ? "bg-green-300" : "hover:bg-gray-100"
+//                   }`}
+//                   onClick={() => handleColorChange(color)}
+//                 >
+//                   {color}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div className="mt-4 flex gap-3">
+//             <Button type="primary" onClick={() => setVisible(false)} className="w-full italic text-black border-green-300 bg-green-200 shadow-lg shadow-green-500/80">Apply</Button>
+//             <Button onClick={resetFilters} className="w-full italic border-green-300 shadow-lg shadow-green-500/80">Reset</Button>
+//           </div>
+//         </div>
+//       )}
+
+//       <div className="flex flex-col items-center justify-center w-full">
+//         {filteredProducts.length > 0 ? <Box filteredData={filteredProducts} /> : <p className="text-center text-gray-500">Not Found</p>}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default WomenPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app/[id]/page.jsx
+// "use client";
+// import { useParams } from "next/navigation";
+// import Detail from "@/app/components/_detail/Detail";
+
+// const DetailPage = () => {
+//   const { id } = useParams();
+//   console.log("Current Product ID:", id);
+
+//   return <Detail id={id} />;
+// };
+
+// export default DetailPage;
+
+// redux/features/authSlice.js
+// import { createSlice } from '@reduxjs/toolkit';
+
+// const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+
+// const initialState = {
+//   user: storedUser ? JSON.parse(storedUser) : null,
+//   isAuthenticated: storedUser ? true : false,
+// };
+
+// const authSlice = createSlice({
+//   name: 'auth',
+//   initialState,
+//   reducers: {
+//     login: (state, action) => {
+//       state.user = action.payload;
+//       state.isAuthenticated = true;
+//       localStorage.setItem("user", JSON.stringify(action.payload));
+//     },
+//     logout: (state) => {
+//       state.user = null;
+//       state.isAuthenticated = false;
+//       localStorage.removeItem("user");
+//     }
+//   },
+// });
+
+// export const { login, logout } = authSlice.actions;
+// export default authSlice.reducer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// redux/features/cartSlice.js
+// import { createSlice } from '@reduxjs/toolkit';
+
+// const cartSlice = createSlice({
+//   name: 'cart',
+//   initialState: { items: [] },
+//   reducers: {
+//     addToCart: (state, action) => {
+//       const item = action.payload;
+//       const exists = state.items.find((c) => c.id === item.id);
+//       exists ? exists.quantity++ : state.items.push({ ...item, quantity: 1 });
+//     },
+//     removeFromCart: (state, action) => {
+//       state.items = state.items.filter((c) => c.id !== action.payload.id);
+//     },
+//     increaseQuantity: (state, action) => {
+//       const item = state.items.find((c) => c.id === action.payload.id);
+//       if (item) item.quantity++;
+//     },
+//     decreaseQuantity: (state, action) => {
+//       const item = state.items.find((c) => c.id === action.payload.id);
+//       if (item) item.quantity > 1 ? item.quantity-- : state.items = state.items.filter((c) => c.id !== item.id);
+//     }
+//   }
+// });
+
+// export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity } = cartSlice.actions;
+// export default cartSlice.reducer;
+
+// redux/features/dessingSlice.js
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+// export const fetchDessing = createAsyncThunk('dessing/fetchDessing', async () => {
+//   const response = await fetch('https://67acb9903f5a4e1477dba29c.mockapi.io/yourstyle');
+//   if (!response.ok) {
+//     throw new Error('Failed to fetch dessing data');
+//   }
+//   return await response.json();
+// });
+
+// const dessingSlice = createSlice({
+//   name: 'dessing',
+//   initialState: {
+//     data: [],
+//     status: 'idle',
+//     error: null,
+//   },
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchDessing.pending, (state) => {
+//         state.status = 'loading';
+//       })
+//       .addCase(fetchDessing.fulfilled, (state, action) => {
+//         state.status = 'succeeded';
+//         state.data = action.payload;
+//       })
+//       .addCase(fetchDessing.rejected, (state, action) => {
+//         state.status = 'failed';
+//         state.error = action.error.message;
+//       });
+//   },
+// });
+
+// export default dessingSlice.reducer;
+
+// redux/features/loginSlice.js
+// import { createSlice } from '@reduxjs/toolkit'
+
+// const initialState = {
+//     value: 0,
+// }
+// export const counterSlice = createSlice({
+//     name: 'counter',
+//     initialState,
+//     reducers: {
+//         increment: (state) => {
+//             state.value += 1
+//         },
+//         decrement: (state) => {
+//             state.value -= 1
+//         },
+//         incrementByAmount: (state, action) => {
+//             state.value += action.payload
+//         },
+//     },
+// })
+
+
+
+// export default initialState
+
+// redux/features/notificationSlice.js
+// import { createSlice } from '@reduxjs/toolkit';
+
+// const initialState = {
+//   alertMessage: null,
+//   alertType: null,
+// };
+
+// const notificationSlice = createSlice({
+//   name: 'notification',
+//   initialState,
+//   reducers: {
+//     setNotification: (state, action) => {
+//       state.alertMessage = action.payload.message;
+//       state.alertType = action.payload.type;
+//     },
+//     clearNotification: (state) => {
+//       state.alertMessage = null;
+//       state.alertType = null;
+//     },
+//   },
+// });
+
+// export const { setNotification, clearNotification } = notificationSlice.actions;
+// export default notificationSlice.reducer;
+
+// redux/features/productSlice.js
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+// export const fetchProduct = createAsyncThunk('product/fetchProduct', async () => {
+//   const response = await fetch('https://67acb9903f5a4e1477dba29c.mockapi.io/dress');
+//   if (!response.ok) {
+//     throw new Error('Failed to fetch products');
+//   }
+//   return await response.json();
+// });
+
+// const productSlice = createSlice({
+//   name: 'product',
+//   initialState: {
+//     data: [],
+//     status: 'idle',
+//     error: null,
+//   },
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchProduct.pending, (state) => {
+//         state.status = 'loading';
+//       })
+//       .addCase(fetchProduct.fulfilled, (state, action) => {
+//         state.status = 'succeeded';
+//         state.data = action.payload;
+//       })
+//       .addCase(fetchProduct.rejected, (state, action) => {
+//         state.status = 'failed';
+//         state.error = action.error.message;
+//       });
+//   },
+// });
+
+// export default productSlice.reducer;
+
+// redux/features/wishlistSlice.js
+// import { createSlice } from '@reduxjs/toolkit';
+
+// const wishlistSlice = createSlice({
+//   name: 'wishlist',
+//   initialState: { items: [] },
+//   reducers: {
+//     toggleWishlist: (state, action) => {
+//       const item = action.payload;
+//       const updatedItem = {
+//         ...item,
+//         gender: item.gender || "Unknown",
+//         categories: item.categories || "Unknown",
+//       };
+
+//       const exists = state.items.some((w) => w.id === updatedItem.id);
+//       state.items = exists ? state.items.filter((w) => w.id !== updatedItem.id) : [...state.items, updatedItem];
+//     }
+//   }
+// });
+
+// export const { toggleWishlist } = wishlistSlice.actions;
+// export default wishlistSlice.reducer;
+
+
+// redux/provider.js
+// 'use client';
+// import { Provider } from 'react-redux';
+// import { store } from './store';
+
+// export function Providers({ children }) {
+//   return (
+//     <Provider store={store}>
+//       {children}
+//     </Provider>
+//   );
+// }
+
+// redux/store.js
+// import { configureStore } from '@reduxjs/toolkit';
+// import productReducer from './features/productSlice';
+// import dessingReducer from './features/dessingSlice.js';
+// import wishlistReducer from './features/wishlistSlice';
+// import cartReducer from './features/cartSlice';
+// import notificationReducer from './features/notificationSlice';
+// import authReducer from "./features/authSlice";
+
+// export const store = configureStore({
+//   reducer: {
+//     product: productReducer,
+//     dessing: dessingReducer,
+//     wishlist: wishlistReducer,
+//     cart: cartReducer,
+//     notification: notificationReducer,
+//     auth: authReducer,
+//   },
+// });

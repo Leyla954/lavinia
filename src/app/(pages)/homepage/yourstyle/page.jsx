@@ -80,7 +80,7 @@ const Page = () => {
           <Carousel autoplay>
             {selectedItem.image.filter((_, index) => index !== 0).map((img, index) => (
               <div key={index}>
-                <img src={img} alt={`Slide ${index}`} className="w-full sm:h-96 object-cover rounded-lg" />
+                <img src={img} alt={`Slide ${index}`} className="w-full sm:h-96 object-contain rounded-lg" />
               </div>
             ))}
           </Carousel>

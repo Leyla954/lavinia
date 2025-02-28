@@ -6,8 +6,14 @@ const wishlistSlice = createSlice({
   reducers: {
     toggleWishlist: (state, action) => {
       const item = action.payload;
-      const exists = state.items.some((w) => w.id === item.id);
-      state.items = exists ? state.items.filter((w) => w.id !== item.id) : [...state.items, item];
+      const updatedItem = {
+        ...item,
+        gender: item.gender || "Unknown",
+        categories: item.categories || "Unknown",
+      };
+
+      const exists = state.items.some((w) => w.id === updatedItem.id);
+      state.items = exists ? state.items.filter((w) => w.id !== updatedItem.id) : [...state.items, updatedItem];
     }
   }
 });
