@@ -60,21 +60,20 @@ const StepForm = ({ onClose }) => {
     if (stepId === 1) {
       setStep2Images(imageSrc.includes("2.png")
         ? [
-            "https://www.moodfabrics.com/media/StaticPageImages/4.png",
-            "https://www.moodfabrics.com/media/StaticPageImages/6.png",
-            "https://www.moodfabrics.com/media/StaticPageImages/7.png"
-          ]
+          "https://www.moodfabrics.com/media/StaticPageImages/4.png",
+          "https://www.moodfabrics.com/media/StaticPageImages/6.png",
+          "https://www.moodfabrics.com/media/StaticPageImages/7.png"
+        ]
         : [
-            "https://www.moodfabrics.com/media/StaticPageImages/15.png",
-            "https://www.moodfabrics.com/media/StaticPageImages/16.png",
-            "https://www.moodfabrics.com/media/StaticPageImages/17.png"
-          ]);
+          "https://www.moodfabrics.com/media/StaticPageImages/15.png",
+          "https://www.moodfabrics.com/media/StaticPageImages/16.png",
+          "https://www.moodfabrics.com/media/StaticPageImages/17.png"
+        ]);
     }
   };
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 sm:p-7 shadow-2xl rounded-lg flex flex-col gap-6 bg-transparent relative z-10">
-      {/* Close Button */}
       <button className="absolute top-3 right-3 text-gray-600 hover:text-gray-900" onClick={onClose}>
         <CloseOutlined style={{ fontSize: "20px" }} />
       </button>
@@ -101,7 +100,7 @@ const StepForm = ({ onClose }) => {
             {extraSelects && (
               <div className="mt-4 flex flex-wrap gap-4 justify-center sm:justify-start">
                 {[{ label: "Waist", value: waistSize, setValue: setWaistSize, min: 40 },
-                  { label: "Length", value: lengthSize, setValue: setLengthSize, min: 0 }
+                { label: "Length", value: lengthSize, setValue: setLengthSize, min: 0 }
                 ].map(({ label, value, setValue, min }) => (
                   <div key={label} className="relative w-24 sm:w-28">
                     <input type="number" value={value} onChange={(e) => setValue(Math.max(min, Number(e.target.value)))} className="w-full h-10 border border-gray-300 rounded-md text-center appearance-none" />
@@ -113,9 +112,7 @@ const StepForm = ({ onClose }) => {
         </div>
       ))}
       <div className="flex justify-center mt-6">
-        <button onClick={() => setShowCalculate(true)} className="w-48 sm:w-60 h-14 sm:h-16 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-500 transition">
-          Calculate
-        </button>
+        <button onClick={() => setShowCalculate(true)} className="w-48 sm:w-60 h-14 sm:h-16 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-500 transition">Calculate</button>
       </div>
       {showCalculate && (
         <Calculate waistSize={waistSize} lengthSize={lengthSize} selectedImage={selectedImages[3]} onClose={() => setShowCalculate(false)} />

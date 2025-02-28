@@ -7,7 +7,6 @@ import Link from "next/link";
 import { FacebookOutlined, InstagramOutlined, SendOutlined, StarFilled } from "@ant-design/icons";
 import { Modal, Input, Button } from "antd";
 
-
  const Home = () => {
   const [showStepForm, setShowStepForm] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -64,12 +63,7 @@ import { Modal, Input, Button } from "antd";
         <div className="w-full h-full p-4 sm:p-7 bg-right bg-cover bg-no-repeat bg-fixed bg-transparent bg-[url('https://i.pinimg.com/736x/d3/ba/35/d3ba35a4f9f3c3d475b03671cb86b035.jpg')] flex flex-col items-center">
           <Carousel />
           {!showStepForm && (
-            <img
-              src="https://www.moodfabrics.com/media/StaticPageImages/20.png"
-              alt="Open Step Form"
-              className="cursor-pointer mt-5 w-[60%] sm:w-[40%] max-w-full h-auto"
-              onClick={() => setShowStepForm(true)}
-            />
+            <img src="https://www.moodfabrics.com/media/StaticPageImages/20.png" alt="Open Step Form" className="cursor-pointer mt-5 w-[60%] sm:w-[40%] max-w-full h-auto" onClick={() => setShowStepForm(true)}/>
           )}
           {showStepForm && (
             <div className="my-7 w-full">

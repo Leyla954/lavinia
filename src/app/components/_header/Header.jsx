@@ -58,7 +58,7 @@ const Header = () => {
             alt="Logo"
             className="h-20 md:h-24"
           />
-          <h1 className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</h1>
+          <Link href="/" className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</Link>
           
           </div>
          

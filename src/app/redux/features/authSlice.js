@@ -7,22 +7,30 @@ const initialState = {
   isAuthenticated: storedUser ? true : false,
 };
 
+const loadUserFromStorage = () => {
+  if (typeof window !== 'undefined') {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  }
+  return null;
+};
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: { user: loadUserFromStorage(), isAuthenticated: !!loadUserFromStorage() },
   reducers: {
     login: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem("user", JSON.stringify(action.payload));
+      localStorage.setItem('user', JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("user");
-    }
+      localStorage.removeItem('user');
+    },
   },
 });
 
 export const { login, logout } = authSlice.actions;
-export default authSlice.reducer;
+export default authSlice.reducer

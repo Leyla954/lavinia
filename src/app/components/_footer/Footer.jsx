@@ -4,17 +4,14 @@ import { FacebookOutlined, InstagramOutlined, TwitterOutlined, YoutubeOutlined, 
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-gray-900 text-white py-8 bg-cover bg-center bg-[url(https://t3.ftcdn.net/jpg/02/14/94/78/360_F_214947872_0buOruh9TiFyu9S3BT1sH6Bhvj6R2v0s.jpg)]">
-      <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row flex-wrap items-start justify-between text-center md:text-left">
-        {/* Logo and Description */}
+    <footer className="py-8 bg-cover bg-center bg-[url(https://t3.ftcdn.net/jpg/02/14/94/78/360_F_214947872_0buOruh9TiFyu9S3BT1sH6Bhvj6R2v0s.jpg)]">
+      <div className="max-w-5xl m-auto flex flex-col md:flex-row flex-wrap items-start justify-between text-center md:text-left">
         <div className="mb-6 md:mb-0 w-full md:w-1/4">
           <h2 className="text-4xl font-bold italic text-black">Lavinia</h2>
-          <p className="text-lg text-gray-300 mt-2 max-w-xs italic text-black">
+          <p className="text-lg mt-2 max-w-xs italic text-black">
             The best choices in the world of fashion. Your style, our inspiration.
           </p>
         </div>
-
-        {/* Navigation */}
         <div className="w-full md:w-1/4">
           <h3 className="text-lg font-semibold italic text-black mb-3">Quick Links</h3>
           <ul className="text-base space-y-1">
@@ -25,8 +22,6 @@ const Footer = () => {
             <li><a href="/about" className="hover:text-green-400 italic text-black">About Us</a></li>
           </ul>
         </div>
-
-        {/* Services */}
         <div className="w-full md:w-1/4">
           <h3 className="text-lg font-semibold italic text-black mb-3">Services</h3>
           <ul className="text-base space-y-1">
@@ -36,8 +31,6 @@ const Footer = () => {
             <li><a href="#" className="hover:text-green-400 italic text-black">Security</a></li>
           </ul>
         </div>
-
-        {/* Contact */}
         <div className="w-full md:w-1/4">
           <h3 className="text-lg font-semibold italic text-black mb-3">Contact</h3>
           <p className="text-base italic text-black">Email: info@lavinia.com</p>
@@ -45,8 +38,6 @@ const Footer = () => {
           <p className="text-base italic text-black">Address: Baku, Azerbaijan</p>
         </div>
       </div>
-
-      {/* Social Media */}
       <div className="flex space-x-4 my-6 w-full justify-center">
         <a href="#" className="text-black hover:text-white text-3xl p-2"><FacebookOutlined /></a>
         <a href="#" className="text-black hover:text-white text-3xl p-2"><InstagramOutlined /></a>
@@ -54,8 +45,6 @@ const Footer = () => {
         <a href="#" className="text-black hover:text-white text-3xl p-2"><YoutubeOutlined /></a>
         <a href="#" className="text-black hover:text-white text-3xl p-2"><LinkedinOutlined /></a>
       </div>
-
-      {/* Copyright */}
       <div className="text-center text-base border-t border-gray-700 pt-3 italic text-black">
         &copy; {new Date().getFullYear()} Lavinia. All rights reserved.
       </div>
