@@ -30,15 +30,16 @@ const wishlistSlice = createSlice({
     toggleWishlist: (state, action) => {
       const item = action.payload;
       const exists = state.items.some((w) => w.id === item.id);
+      const updatedItems = exists
+      ? state.items.filter((w) => w.id !== item.id)
+      : [...state.items, { id: item.id, title: item.title, image: item.image, price: item.price }];
+    
+    state.items = updatedItems;
+      
+      state.items = updatedItems;
 
-      if (exists) {
-        state.items = state.items.filter((w) => w.id !== item.id);
-      } else {
-        state.items.push({ id: item.id, title: item.title, image: item.image, price: item.price });
-      }
-
-      saveWishlistToLocalStorage(state.items);
-    },
+      saveWishlistToLocalStorage(state.items); 
+},
     syncWishlistWithLocalStorage: (state) => {
       state.items = loadWishlistFromLocalStorage();
     }

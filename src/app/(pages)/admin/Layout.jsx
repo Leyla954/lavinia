@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -8,9 +7,10 @@ const AdminLayout = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const adminToken = localStorage.getItem("adminToken");
+    const adminToken = JSON.parse(localStorage.getItem("isAdminAuthenticated"));
+    
     if (!adminToken) {
-      router.push("/admin/login");
+      router.push("/");
     } else {
       setIsAuthenticated(true);
     }

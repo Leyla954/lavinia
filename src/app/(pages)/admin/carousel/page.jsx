@@ -21,7 +21,7 @@ const CarouselPage = () => {
   };
 
   const saveCarouselItem = () => {
-    if (!imageUrl.trim()) return alert('Şəkil linki boş ola bilməz!');
+    if (!imageUrl.trim()) return alert('Please add link');
 
     const categoryLabel = getCategoryLabel(shopLink);
     let updatedImages;

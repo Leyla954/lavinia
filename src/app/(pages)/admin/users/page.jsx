@@ -84,7 +84,6 @@ const UsersPage = () => {
         pagination={{ pageSize: 5 }} 
         className="overflow-x-auto bg-white m-7 rounded-xl shadow-lg shadow-green-500/80"
       />
-      
       <Modal
         title="Edit User"
         open={isModalOpen}

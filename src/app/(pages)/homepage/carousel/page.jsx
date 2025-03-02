@@ -17,7 +17,7 @@ const FashionCarousel = () => {
         {categories.map(({ src, label, link, textColor }, index) => (
           <div key={index} className="relative h-[600px] sm:h-[700px] flex items-center justify-center overflow-hidden">
             <Link href={link || "#"} className="block w-full h-full relative">
-              <img src={src} alt={label} className="w-full h-full object-cover rounded-2xl shadow-lg cursor-pointer"/>
+              <img src={src} alt={label} className="w-full h-full object-contain rounded-2xl shadow-lg cursor-pointer"/>
               <span className={`absolute top-1/2 right-10 transform -translate-y-1/2 ${textColor} text-6xl sm:text-8xl font-extrabold tracking-wider drop-shadow-2xl`} style={{ fontFamily: 'Chalkduster, Brush Script MT, cursive' }}>{label}</span>
             </Link>
           </div>

@@ -29,8 +29,12 @@ const Header = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
 
+  const wishlistCount = useSelector((state) => state.wishlist.items.length);
+  const cartCount = useSelector((state) => state.cart.items.length);
+
+
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
-  
+
   const handleLogout = () => {
     dispatch(logout());
     router.push("/");
@@ -51,10 +55,10 @@ const Header = () => {
     <header className="bg-white shadow-lg shadow-green-300/50 top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-6 px-6 md:px-12 lg:px-16">
         <div className="flex items-center gap-3 cursor-pointer">
-          <img src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png" alt="Logo" className="h-20 md:h-24"/>
+          <img src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png" alt="Logo" className="h-20 md:h-24" />
           <Link href="/" className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</Link>
-          </div>
-          <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+        </div>
+        <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
           <Link href="/" className="relative transition duration-300 hover:text-green-600 group">Home
             <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
           </Link>
@@ -80,10 +84,15 @@ const Header = () => {
               </Link>
             </>
           )}
-          <Link href="/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform"><HeartOutlined /></Link>
-          <Link href="/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform"><ShoppingOutlined /></Link>
-          <div className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
-          <Dropdown menu={userMenu} trigger={["hover"]} placement="bottom">
+          <Link href="/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform">
+            <HeartOutlined />
+            {wishlistCount > 0 && <sub className="absolute text-xs px-1 rounded-full">{wishlistCount}</sub>}
+          </Link>
+          <Link href="/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform">
+            <ShoppingOutlined />
+            {cartCount > 0 && <sub className="absolute text-xs px-1 rounded-full">{cartCount}</sub>}
+          </Link><div className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+            <Dropdown menu={userMenu} trigger={["hover"]} placement="bottom">
               <span className="relative transition duration-300 hover:text-green-600 group cursor-pointer">
                 {user?.name} {user?.surname}
                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
