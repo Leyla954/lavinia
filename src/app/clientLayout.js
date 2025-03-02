@@ -5,9 +5,11 @@ import Footer from "./components/_footer/Footer";
 import Loading from "./loading";
 import { Providers } from "./redux/provider";
 import Notification from "./components/_notification/Notification";
+import { usePathname } from "next/navigation";
 
 export default function ClientLayout({ children }) {
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
@@ -21,15 +23,17 @@ export default function ClientLayout({ children }) {
     );
   }
 
+  const isAdminPage = pathname.startsWith("/admin");
+
   return (
     <>
      <Providers>
-      <Header />
+     {!isAdminPage && <Header />}
       <div className="flex-1 flex flex-col">
         <Notification />
         <main className="flex-1">{children}</main>
       </div>
-      <Footer />
+      {!isAdminPage && <Footer />}
     </Providers>
     </>
   );

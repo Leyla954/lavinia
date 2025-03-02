@@ -68,15 +68,12 @@ const Box = ({ wishlistPage = false, shopPage = false, filteredData = [] }) => {
                   <p className='text-gray-700 font-semibold text-sm'>{item.title}</p>
                   <p className='text-blue-600 font-semibold text-lg'>{item.price} AZN</p>
                   <Link href={`/${item.id}`}>
-                    <button className="mt-2 text-m bg-green-100 py-2 px-4 rounded-lg shadow-lg shadow-green-500/80 hover:shadow-green-700/100 transition w-full">
-                      Detail
-                    </button>
+                    <button className="mt-2 text-m bg-green-100 py-2 px-4 rounded-lg shadow-lg shadow-green-500/80 hover:shadow-green-700/100 transition w-full">Detail</button>
                   </Link>
                 </div>
               </div>
             ))}
           </div>
-
           {!wishlistPage && visibleCount < displayedData.length && (
             <button
               onClick={() => setVisibleCount(visibleCount + 4)}

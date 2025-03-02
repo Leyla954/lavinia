@@ -41,9 +41,7 @@ const Header = () => {
       {
         key: "logout",
         label: (
-          <span onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
-            <LogoutOutlined /> Logout
-          </span>
+          <span onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"><LogoutOutlined /> Logout</span>
         )
       }
     ]
@@ -53,19 +51,11 @@ const Header = () => {
     <header className="bg-white shadow-lg shadow-green-300/50 top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-6 px-6 md:px-12 lg:px-16">
         <div className="flex items-center gap-3 cursor-pointer">
-          <img
-            src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png"
-            alt="Logo"
-            className="h-20 md:h-24"
-          />
+          <img src="https://static.vecteezy.com/system/resources/previews/041/933/675/non_2x/ai-generated-silhouette-women-isolated-on-transparent-background-free-png.png" alt="Logo" className="h-20 md:h-24"/>
           <Link href="/" className="text-4xl md:text-6xl font-serif italic text-gray-800 tracking-wide">Lavinia</Link>
-          
           </div>
-         
-
-        <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
-          <Link href="/" className="relative transition duration-300 hover:text-green-600 group">
-            Home
+          <nav className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
+          <Link href="/" className="relative transition duration-300 hover:text-green-600 group">Home
             <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
           </Link>
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -74,8 +64,7 @@ const Header = () => {
               <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
             </span>
           </Dropdown>
-          <Link href="/menu/desing" className="relative transition duration-300 hover:text-green-600 group">
-            Design
+          <Link href="/menu/desing" className="relative transition duration-300 hover:text-green-600 group">Design
             <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
           </Link>
           {isAuthenticated ? (
@@ -83,22 +72,16 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link href="/log-in/login" className="relative transition duration-300 hover:text-green-600 group">
-                Login
+              <Link href="/log-in/login" className="relative transition duration-300 hover:text-green-600 group">Login
                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
               </Link>
-              <Link href="/log-in/signup" className="relative transition duration-300 hover:text-green-600 group">
-                Sign up
+              <Link href="/log-in/signup" className="relative transition duration-300 hover:text-green-600 group">Sign up
                 <span className="absolute top-7 left-3/4 transform -translate-x-3/4 w-0 h-0.5 bg-transparent group-hover:w-full group-hover:bg-green-500 transition-all duration-800"></span>
               </Link>
             </>
           )}
-          <Link href="/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform">
-            <HeartOutlined />
-          </Link>
-          <Link href="/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform">
-            <ShoppingOutlined />
-          </Link>
+          <Link href="/icons/wishlist" className="relative text-xl md:text-2xl hover:text-red-500 transition-transform"><HeartOutlined /></Link>
+          <Link href="/icons/addCart" className="relative text-xl md:text-2xl hover:text-blue-500 transition-transform"><ShoppingOutlined /></Link>
           <div className="hidden lg:flex items-center space-x-6 md:space-x-8 text-base md:text-lg font-serif italic">
           <Dropdown menu={userMenu} trigger={["hover"]} placement="bottom">
               <span className="relative transition duration-300 hover:text-green-600 group cursor-pointer">
@@ -108,26 +91,19 @@ const Header = () => {
             </Dropdown>
           </div>
         </nav>
-        
-
         <div className="lg:hidden flex items-center">
           <MenuOutlined className="text-3xl cursor-pointer" onClick={toggleMenu} />
         </div>
       </div>
-
       {isMenuOpen && (
         <div className="lg:hidden absolute top-16 left-0 w-full bg-white shadow-lg flex flex-col items-center py-5 gap-4 text-base md:text-lg font-serif italic">
           <Link href="/" className="hover:text-green-600">Home</Link>
           <Dropdown menu={{ items }} trigger={["click"]}>
-            <span className="hover:text-green-600 cursor-pointer">
-              <Space>Shop <DownOutlined /></Space>
-            </span>
+            <span className="hover:text-green-600 cursor-pointer"><Space>Shop <DownOutlined /></Space></span>
           </Dropdown>
           <Link href="/menu/desing" className="hover:text-green-600">Design</Link>
           {isAuthenticated ? (
-            <span onClick={handleLogout} className="flex justify-center items-center gap-2">
-            <LogoutOutlined /> Logout
-          </span>
+            <span onClick={handleLogout} className="flex justify-center items-center gap-2"><LogoutOutlined /> Logout</span>
           ) : (
             <>
               <Link href="/log-in/login" className="hover:text-green-600">Login</Link>

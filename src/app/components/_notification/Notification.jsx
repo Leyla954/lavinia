@@ -21,19 +21,13 @@ const Notification = () => {
           width: '100%',
           padding: '10px 15px',
           borderRadius: '8px',
-          background: 'linear-gradient(135deg, #e0f7ff, #f0faff)', // Mavi-ağ gradient fon
-          color: '#004080', // Daha yumşak mavi ton
+          background: 'linear-gradient(135deg, #e0f7ff, #f0faff)',
+          color: '#004080',
           border: '1px solid #b3d9ff',
           boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
         }}
       />
-      {/* 3 saniye sonra bildirim kapanır */}
-      <button
-        onClick={() => dispatch(clearNotification())}
-        className="absolute top-2 right-2 text-white bg-transparent border-none cursor-pointer text-xl"
-      >
-        X
-      </button>
+      <button onClick={() => dispatch(clearNotification())} className="absolute top-2 right-2 text-white bg-transparent border-none cursor-pointer text-xl">X</button>
     </div>
   );
 };

@@ -49,14 +49,13 @@ const DessingPage = () => {
     if (typeof window !== "undefined") {
       const storedSelections = JSON.parse(localStorage.getItem("savedSelections")) || [];
       setSavedSelections(storedSelections);
-  
-      // Əgər seçimlər varsa, sonuncusunu `Your Dress` kimi göstər, yoxdursa `Your Dress`-i sıfırla
+
       if (storedSelections.length > 0) {
         setSelectedItems(prev => ({ ...prev, "Your Dress": storedSelections[storedSelections.length - 1]["Your Dress"] }));
       } else {
         setSelectedItems(prev => {
           const newState = { ...prev };
-          delete newState["Your Dress"]; // Boşdursa, Your Dress-i sil
+          delete newState["Your Dress"];
           return newState;
         });
       }
@@ -119,23 +118,14 @@ const DessingPage = () => {
     <div className="relative min-h-screen bg-cover bg-center px-4 md:px-6 lg:px-8 bg-[url('https://www.creativefabrica.com/wp-content/uploads/2021/10/29/Abstract-Watercolor-Background-Design-Graphics-19383758-1.jpg')]">
       <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto h-auto p-4 md:p-6 bg-gray-100 rounded-lg shadow-lg shadow-green-300/80">
         <div className="relative w-full md:w-1/2 p-4 bg-gray-100 rounded-lg shadow-md">
-          <img
-            src="https://files.ecommercedns.uk/231423/3ef155cdbc4291b907e11eda1abb7dd6.png"
-            alt="Dress Preview"
-            className="w-full h-auto object-contain rounded-lg"
-          />
+          <img src="https://files.ecommercedns.uk/231423/3ef155cdbc4291b907e11eda1abb7dd6.png" alt="Dress Preview" className="w-full h-auto object-contain rounded-lg" />
           {Object.entries(selectedItems).map(([category, image], index) => (
             category !== "Your Dress" && (
-              <img
-                key={index}
-                src={image}
-                alt="Overlay"
-                className={`absolute object-contain ${
-                  category === "Body" ? "w-[20%] h-[30%] top-[13%] left-[40%]" :
-                    category === "Sleeve" ? "w-[90%] h-full bottom-[2%] left-[5%] shadow-lg" :
-                      category === "Skirt Style" ? "w-[54%] h-[40%] bottom-[29%] left-[23%]" :
-                        "w-full h-full"
-                  }`}
+              <img key={index} src={image} alt="Overlay" className={`absolute object-contain ${category === "Body" ? "w-[20%] h-[30%] top-[13%] left-[40%]" :
+                  category === "Sleeve" ? "w-[90%] h-full bottom-[2%] left-[5%] shadow-lg" :
+                    category === "Skirt Style" ? "w-[54%] h-[40%] bottom-[29%] left-[23%]" :
+                      "size-full"
+                }`}
               />
             )
           ))}
@@ -146,8 +136,7 @@ const DessingPage = () => {
               <button
                 key={category}
                 className={`px-3 py-1 rounded-lg font-semibold transition-all ${selectedCategory === category ? "shadow-lg shadow-green-500/80" : "shadow-sm"}`}
-                onClick={() => setSelectedCategory(category)}
-              >
+                onClick={() => setSelectedCategory(category)}>
                 {category}
               </button>
             ))}
@@ -159,45 +148,28 @@ const DessingPage = () => {
                 <label
                   key={item.id}
                   className={`p-3 border rounded-lg w-20 h-20 flex flex-col items-center justify-center overflow-hidden cursor-pointer shadow-md transition-all ${selectedItems[selectedCategory] === item.image ? "shadow-green-500/80" : ""}`}
-                  onClick={() => handleSelection(selectedCategory, item.image)}
-                >
-
-
- 
-        
-        
-
-
+                  onClick={() => handleSelection(selectedCategory, item.image)}>
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
                 </label>
               ))}
           </div>
- 
           {selectedCategory === "Your Dress" && savedSelections.length > 0 && (
             <div className="grid grid-cols-3 gap-2">
               {savedSelections.map((selection, index) => (
                 <div key={index} className="p-2 border rounded-lg bg-white shadow-md relative w-32 h-40 flex items-center justify-center">
-                  <img
-                    src="https://files.ecommercedns.uk/231423/3ef155cdbc4291b907e11eda1abb7dd6.png"
-                    alt="Saved Dress"
-                    className="w-32 h-full object-cover rounded-lg"
-                  />
+                  <img src="https://files.ecommercedns.uk/231423/3ef155cdbc4291b907e11eda1abb7dd6.png" alt="Saved Dress" className="w-32 h-full object-cover rounded-lg"/>
                   {Object.entries(selection).map(([category, image], i) => (
                     category !== "hoverIndex" && (
-                      <img
-                        key={i}
-                        src={image}
-                        alt="Overlay"
-                        className={`absolute object-contain ${category === "Body" ? "w-[20%] h-[30%] top-[10%] left-[40%] z-10" :
-                            category === "Sleeve" ? "size-full bottom-[3%] z-10" :
-                              category === "Skirt Style" ? "w-[50%] h-[41%] bottom-[33%] left-[25%] z-0" :
-                                "w-full h-full"
+                      <img key={i} src={image} alt="Overlay" className={`absolute object-contain ${
+                          category === "Body" ? "w-[20%] h-[30%] top-[10%] left-[40%] z-10" :
+                          category === "Sleeve" ? "size-full bottom-[3%] z-10" :
+                          category === "Skirt Style" ? "w-[50%] h-[41%] bottom-[33%] left-[25%] z-0" :
+                          "size-full"
                           }`}
                       />
                     )
                   ))}
-                  <button
-                    className="absolute bottom-2 right-2 text-red-500 p-1 rounded-full"
+                  <button className="absolute bottom-2 right-2 text-red-500 p-1 rounded-full"
                     onClick={(e) => {
                       e.stopPropagation();
                       removeSavedSelection(index);

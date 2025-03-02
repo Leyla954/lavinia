@@ -79,8 +79,7 @@ const DetailPage = () => {
 
   return (
     <div className="md:h-[500px] flex items-center justify-center bg-cover bg-top pt-10 px-4 sm:px-8 bg-[url(https://t4.ftcdn.net/jpg/11/04/71/65/360_F_1104716585_VJK8pWVuFAyi6BHgZektW1EyR5ktyYrD.jpg)]">
-
-      {alertMessage && (
+{alertMessage && (
         <div className="fixed top-5 right-5 z-50 w-full max-w-[300px] md:max-w-[250px]">
           <Alert
             message={alertMessage}
@@ -99,43 +98,26 @@ const DetailPage = () => {
           />
         </div>
       )}
-
       <div className="h-[430px] bg-white shadow-lg shadow-green-400/80 -mt-2 rounded-lg w-full max-w-3xl flex flex-col md:flex-row p-6 gap-6">
         <div className="md:w-1/2 flex justify-center">
           <img src={product?.image} alt={product?.title} className="w-full max-w-[300px] sm:max-w-[400px] object-contain transition-all" />
         </div>
-
         <div className="md:w-1/2 flex flex-col justify-center">
           <h1 className="text-xl font-bold">{product?.title}</h1>
           <p className="text-lg text-gray-600 mt-2">{product?.price} AZN</p>
           <p className="text-sm text-gray-500 mt-2">{product?.description}</p>
-
           <div className="flex items-center mt-3">
             <StarRating rating={userRating} onRatingChange={setUserRating} />
             <span className="ml-2 text-gray-700">{product?.rating?.rate} / 5</span>
             <span className="ml-2 text-gray-500">({product?.rating?.count} reviews)</span>
           </div>
-
           <div className="flex gap-4 mt-4">
-            {/* Wishlist Icon */}
             {isInWishlist ? (
-              <HeartFilled
-                onClick={handleWishlistClick}
-                className="text-red-500 text-2xl cursor-pointer hover:scale-110 transition-transform"
-              />
+              <HeartFilled onClick={handleWishlistClick} className="text-red-500 text-2xl cursor-pointer hover:scale-110 transition-transform"/>
             ) : (
-              <HeartOutlined
-                onClick={handleWishlistClick}
-                className="text-gray-500 text-2xl cursor-pointer hover:text-red-500 hover:scale-110 transition-transform"
-              />
+              <HeartOutlined onClick={handleWishlistClick} className="text-gray-500 text-2xl cursor-pointer hover:text-red-500 hover:scale-110 transition-transform"/>
             )}
-
-            {/* Cart Icon */}
-            <ShoppingOutlined
-              onClick={handleCartClick}
-              className={`text-2xl cursor-pointer hover:scale-110 transition-transform ${isInCart ? 'text-blue-500' : 'text-gray-500 hover:text-blue-500'
-                }`}
-            />
+            <ShoppingOutlined onClick={handleCartClick} className={`text-2xl cursor-pointer hover:scale-110 transition-transform ${isInCart ? 'text-blue-500' : 'text-gray-500 hover:text-blue-500'}`}/>
           </div>
         </div>
       </div>

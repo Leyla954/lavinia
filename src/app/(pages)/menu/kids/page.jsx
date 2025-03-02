@@ -53,27 +53,15 @@ const KidsPage = () => {
   return (
     <div className="bg-[url('https://lifencolors.in/cdn/shop/files/4_057e949c-7fca-4a68-b453-8d16f439638b.webp?v=1726034492&width=1946')] bg-cover bg-fixed bg-center min-h-screen py-5 flex flex-col items-center bg-green-50 px-4 sm:px-6 md:px-8">
       <div className="flex flex-col sm:flex-row justify-center gap-4 items-center mb-5 w-full max-w-2xl">
-        <Input
-          placeholder="Search for products..."
-          prefix={<SearchOutlined />}
-          className='shadow-lg shadow-green-500/80 border-none w-full sm:w-[400px] h-[35px]'
-        />
-        <Button
-          icon={<FilterOutlined />}
-          onClick={() => setVisible(true)} 
-          className='text-sm py-4 px-6 shadow-lg shadow-green-500/80'
-        >
-          Filter
-        </Button>
+        <Input placeholder="Search for products..." prefix={<SearchOutlined />} className='shadow-lg shadow-green-500/80 border-none w-full sm:w-[400px] h-[35px]'/>
+        <Button icon={<FilterOutlined />} onClick={() => setVisible(true)}  className='text-sm py-4 px-6 shadow-lg shadow-green-500/80'>Filter</Button>
       </div>
-
       {visible && (
         <div className="fixed top-0 right-0 w-72 h-full bg-gradient-to-b from-green-100 to-white p-4 shadow-lg overflow-auto z-50 rounded-l-lg">
           <div className="flex justify-between items-center border-b pb-2 mb-3">
             <h3 className="text-gray-700 font-semibold italic">Filter</h3>
             <Button icon={<CloseOutlined />} onClick={() => setVisible(false)} className="text-gray-500 hover:text-black border-none shadow-lg shadow-green-500/80" />
           </div>
-
           <div className="mb-4">
             <h4 className="text-gray-700 font-semibold italic mb-2">Category</h4>
             <div className="flex flex-wrap gap-2">
@@ -90,7 +78,6 @@ const KidsPage = () => {
               ))}
             </div>
           </div>
-
           <div>
             <h4 className="text-gray-700 font-semibold italic mb-2">Color</h4>
             <div className="flex flex-wrap gap-2">
@@ -107,14 +94,12 @@ const KidsPage = () => {
               ))}
             </div>
           </div>
-
           <div className="mt-4 flex gap-3">
             <Button type="primary" onClick={() => setVisible(false)} className="w-full italic text-black border-green-300 bg-green-200 shadow-lg shadow-green-500/80">Apply</Button>
             <Button onClick={resetFilters} className="w-full italic border-green-300 shadow-lg shadow-green-500/80">Reset</Button>
           </div>
         </div>
       )}
-
       <div className="flex flex-col items-center justify-center w-full">
         {filteredProducts.length > 0 ? <Box filteredData={filteredProducts} /> : <p className="text-center text-gray-500">Not Found</p>}
       </div>

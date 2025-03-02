@@ -2,8 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const loadCartFromStorage = () => {
   if (typeof window !== 'undefined') {
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem('cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Cart yüklenirken səhv baş verdi:", error);
+      return [];
+    }
   }
   return [];
 };
@@ -32,20 +37,22 @@ const cartSlice = createSlice({
       saveCartToStorage(state.items);
     },
     increaseQuantity: (state, action) => {
-      const item = state.items.find((i) => i.id === action.payload.id);
+      const item = state.items.find((i) => i.id === action.payload);
       if (item) {
         item.quantity += 1;
       }
       saveCartToStorage(state.items);
     },
     decreaseQuantity: (state, action) => {
-      const item = state.items.find((i) => i.id === action.payload.id);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-      } else {
-        state.items = state.items.filter((i) => i.id !== action.payload.id);
+      const item = state.items.find((i) => i.id === action.payload);
+      if (item) {
+        if (item.quantity > 1) {
+          item.quantity -= 1;
+        } else {
+          state.items = state.items.filter((i) => i.id !== action.payload);
+        }
+        saveCartToStorage(state.items);
       }
-      saveCartToStorage(state.items);
     },
   },
 });

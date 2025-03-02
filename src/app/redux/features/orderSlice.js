@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// API-dən sifarişləri çəkmək üçün async funksiya
 export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
   const response = await fetch("https://67acb9903f5a4e1477dba29c.mockapi.io/orders");
   return response.json();

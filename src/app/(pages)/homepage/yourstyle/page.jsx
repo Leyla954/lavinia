@@ -4,7 +4,6 @@ import { Modal, Spin, Carousel } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDessing } from '@/app/redux/features/dessingSlice';
-import 'swiper/css';
 
 const Page = () => {
   const dispatch = useDispatch();

@@ -1,33 +1,31 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
-// API-dən user-ləri çəkmək üçün async thunk
-export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await fetch("https://jsonplaceholder.typicode.com/users");
-  return response.json();
-});
+const initialState = {
+  user: null,
+  isLoggedIn: false,
+};
 
-const usersSlice = createSlice({
-  name: "users",
-  initialState: {
-    data: [],
-    status: "idle",
-    error: null,
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.data = action.payload;
-      })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    
+    login: (state, action) => {
+      state.user = action.payload;
+      state.isLoggedIn = true;
+    },
+    
+    logout: (state) => {
+      state.user = null;
+      state.isLoggedIn = false;
+    },
+    
+    updateUser: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+    },
   },
 });
 
-export default usersSlice.reducer;
+export const { login, logout, updateUser } = userSlice.actions;
+
+export default userSlice.reducer;

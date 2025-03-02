@@ -2,10 +2,25 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const loadWishlistFromLocalStorage = () => {
   if (typeof window !== "undefined") {
-    const storedWishlist = localStorage.getItem('wishlist');
-    return storedWishlist ? JSON.parse(storedWishlist) : [];
+    try {
+      const storedWishlist = localStorage.getItem('wishlist');
+      return storedWishlist ? JSON.parse(storedWishlist) : [];
+    } catch (error) {
+      console.error("Error loading wishlist from localStorage:", error);
+      return [];
+    }
   }
   return [];
+};
+
+const saveWishlistToLocalStorage = (wishlist) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    } catch (error) {
+      console.error("Error saving wishlist to localStorage:", error);
+    }
+  }
 };
 
 const wishlistSlice = createSlice({
@@ -19,10 +34,10 @@ const wishlistSlice = createSlice({
       if (exists) {
         state.items = state.items.filter((w) => w.id !== item.id);
       } else {
-        state.items.push(item);
+        state.items.push({ id: item.id, title: item.title, image: item.image, price: item.price });
       }
 
-      localStorage.setItem('wishlist', JSON.stringify(state.items)); // Yenilənmiş datanı yadda saxla
+      saveWishlistToLocalStorage(state.items);
     },
     syncWishlistWithLocalStorage: (state) => {
       state.items = loadWishlistFromLocalStorage();
